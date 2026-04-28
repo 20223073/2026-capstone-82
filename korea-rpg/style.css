@@ -1,5 +1,7 @@
 /* ===================================================================
-   Korea Life RPG — Minimal Design (Apple / Airbnb style)
+   Korea Life RPG
+   Menu: clean minimal (Apple style)
+   Game: dark visual-novel RPG style
    =================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
@@ -231,52 +233,82 @@ h1 {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
   pointer-events: none;
 }
 
+/* ---- Dialogue panel: full-width dark bar at bottom ---- */
 #dialogue {
   position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 80px);
-  max-width: 780px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  color: var(--text);
-  padding: 28px 32px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(8, 8, 18, 0.90);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 48px 24px;
   z-index: 10;
+  animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-#text {
-  margin-bottom: 20px;
-  font-size: 17px;
-  font-weight: 500;
-  min-height: 48px;
+/* ---- Speaker name badge ---- */
+#speaker {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 14px 4px 12px;
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 10px;
+}
+
+/* ---- Narration (italic, dimmer) ---- */
+#narration {
+  font-size: 14px;
+  color: rgba(200, 200, 220, 0.65);
+  font-style: italic;
+  margin-bottom: 6px;
   white-space: pre-line;
   word-break: keep-all;
-  line-height: 1.6;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  cursor: pointer;
 }
 
+/* ---- Dialogue text ---- */
+#text {
+  font-size: 18px;
+  font-weight: 400;
+  min-height: 52px;
+  white-space: pre-line;
+  word-break: keep-all;
+  line-height: 1.75;
+  color: #F0EEF8;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+/* ---- Choice buttons ---- */
 #choices {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
+/* Global button base (non-game screens remain unaffected via overrides) */
 button {
   padding: 14px 20px;
   background: var(--surface);
@@ -304,23 +336,62 @@ button:active {
   transform: scale(0.99);
 }
 
+/* Game choice buttons override */
+#choices button {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(230, 225, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 400;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#choices button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(160, 140, 255, 0.40);
+  color: #fff;
+  transform: translateX(3px);
+}
+
 #choices button:last-child {
-  background: var(--text);
-  color: var(--surface);
-  border-color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(230, 225, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.10);
 }
 
 #choices button:last-child:hover {
-  background: #000;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Number badge inside choice button */
+.choice-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  background: rgba(102, 126, 234, 0.35);
+  border: 1px solid rgba(102, 126, 234, 0.5);
+  color: #a9b8f8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
 #hint {
-  font-size: 13px;
-  color: var(--text-subtle);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.30);
   text-align: right;
   display: none;
-  margin-top: 12px;
-  font-weight: 400;
+  margin-top: 10px;
+  letter-spacing: 0.02em;
 }
 
 /* ===================================================================
@@ -331,15 +402,15 @@ button:active {
   position: fixed;
   top: 20px;
   left: 20px;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: var(--text);
-  border: 1px solid var(--border);
+  color: rgba(255, 255, 255, 0.80);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   z-index: 50;
   transition: all 0.15s ease;
@@ -347,8 +418,8 @@ button:active {
 }
 
 #back-btn:hover {
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
   transform: none;
 }
 
@@ -630,12 +701,7 @@ button:active {
   .missions { grid-template-columns: 1fr; }
   .mission-card { padding: 24px 20px; }
 
-  #dialogue {
-    bottom: 20px;
-    width: calc(100% - 32px);
-    padding: 20px;
-  }
-
+  #dialogue { padding: 12px 20px 20px; }
   #text { font-size: 15px; }
   button { padding: 12px 16px; font-size: 14px; }
 

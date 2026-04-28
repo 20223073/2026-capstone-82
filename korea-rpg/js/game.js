@@ -21,13 +21,44 @@ let missionDone = false;
 
 // DOM references
 const bgEl = document.getElementById('background');
+const speakerEl = document.getElementById('speaker');
+const narrationEl = document.getElementById('narration');
 const textEl = document.getElementById('text');
 const choicesEl = document.getElementById('choices');
 const hintEl = document.getElementById('hint');
 const missionCompleteEl = document.getElementById('missionComplete');
 
+// Active choice buttons for keyboard shortcuts
+let activeChoices = [];
+
+// ===================================================================
+// Parse NPC name from dialog text
+// Format: "NPC Name: dialogue text" — narration lines start with (
+// ===================================================================
+function parseDialog(text) {
+  const lines = text.split('\n');
+  const last = lines[lines.length - 1];
+  const colonIdx = last.indexOf(': ');
+
+  if (
+    colonIdx > 0 &&
+    colonIdx <= 15 &&
+    !last.startsWith('(') &&
+    !last.startsWith('"')
+  ) {
+    return {
+      speaker: last.substring(0, colonIdx),
+      dialogue: last.substring(colonIdx + 2),
+      narration: lines.slice(0, -1).join('\n')
+    };
+  }
+
+  return { speaker: '', dialogue: text, narration: '' };
+}
+
 // ===================================================================
 // Typewriter effect — types text letter by letter
+// Click or Space to skip
 // ===================================================================
 function typeText(text, callback) {
   textEl.innerText = '';
@@ -46,22 +77,24 @@ function typeText(text, callback) {
 
   step();
 
-  // Click text to skip typing animation
-  textEl.onclick = () => {
+  const skip = () => {
     if (isTyping) {
       textEl.innerText = text;
       isTyping = false;
       if (callback) callback();
     }
   };
+
+  textEl.onclick = skip;
+  textEl._skipFn = skip;
 }
 
 // ===================================================================
 // Render the current step
 // ===================================================================
 function renderStep() {
-  // Clear old choices
   choicesEl.innerHTML = '';
+  activeChoices = [];
   hintEl.style.display = 'none';
   waitingForEnter = false;
 
@@ -80,21 +113,30 @@ function renderStep() {
     }, 400);
   }
 
-  // Type out the text
-  typeText(step.text, () => {
-    // If step has choices, show them as buttons
+  // Parse speaker / narration / dialogue
+  const parsed = parseDialog(step.text);
+
+  speakerEl.textContent = parsed.speaker;
+  speakerEl.style.display = parsed.speaker ? 'inline-block' : 'none';
+
+  narrationEl.textContent = parsed.narration;
+  narrationEl.style.display = parsed.narration ? 'block' : 'none';
+
+  // Type only the dialogue part
+  typeText(parsed.dialogue, () => {
     if (step.choices && step.choices.length > 0) {
-      step.choices.forEach(choice => {
+      step.choices.forEach((choice, idx) => {
         const btn = document.createElement('button');
-        btn.innerText = choice.label;
+        const num = idx + 1;
+        btn.innerHTML = `<span class="choice-num">${num}</span>${choice.label}`;
         btn.onclick = () => {
           if (isTyping) return;
           handleChoice(choice);
         };
         choicesEl.appendChild(btn);
+        activeChoices.push(choice);
       });
     } else {
-      // No choices — wait for Enter
       waitingForEnter = true;
       hintEl.style.display = 'block';
     }
@@ -166,12 +208,19 @@ function createConfetti() {
 }
 
 // ===================================================================
-// Keyboard: Enter to advance / return to menu
+// Keyboard shortcuts
+//   Space / Enter — skip typing animation or advance (waitingForEnter)
+//   1 / 2 / 3 / 4 — select choice by number
+//   Enter          — return to menu when mission complete
 // ===================================================================
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    if (missionDone) {
-      window.location.href = 'index.html';
+  // Ignore when chatbot input is focused
+  if (document.activeElement === document.getElementById('chatbot-input')) return;
+
+  if (e.key === ' ' || e.key === 'Spacebar') {
+    e.preventDefault();
+    if (isTyping && textEl._skipFn) {
+      textEl._skipFn();
     } else if (!isTyping && waitingForEnter) {
       waitingForEnter = false;
       hintEl.style.display = 'none';
@@ -181,6 +230,18 @@ document.addEventListener('keydown', (e) => {
         renderStep();
       }
     }
+  }
+
+  if (e.key === 'Enter') {
+    if (missionDone) {
+      window.location.href = 'index.html';
+    }
+  }
+
+  // Number keys 1–4 select choices
+  const num = parseInt(e.key);
+  if (num >= 1 && num <= activeChoices.length && !isTyping) {
+    handleChoice(activeChoices[num - 1]);
   }
 });
 

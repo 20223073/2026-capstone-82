@@ -71,9 +71,13 @@ function renderStep() {
     return;
   }
 
-  // Update background if this step has one
+  // Update background with fade transition
   if (step.background) {
-    bgEl.style.backgroundImage = `url('${step.background}')`;
+    bgEl.style.opacity = '0';
+    setTimeout(() => {
+      bgEl.style.backgroundImage = `url('${step.background}')`;
+      bgEl.style.opacity = '1';
+    }, 400);
   }
 
   // Type out the text
@@ -169,8 +173,13 @@ document.addEventListener('keydown', (e) => {
     if (missionDone) {
       window.location.href = 'index.html';
     } else if (!isTyping && waitingForEnter) {
-      // Advance to next step if no choices
-      // (Not used in current missions, but supported)
+      waitingForEnter = false;
+      hintEl.style.display = 'none';
+      const step = currentMission.steps[currentStepKey];
+      if (step && step.nextStep) {
+        currentStepKey = step.nextStep;
+        renderStep();
+      }
     }
   }
 });

@@ -71,13 +71,20 @@ function renderMarkdown(text) {
   return html;
 }
 
+const MAX_HISTORY = 20;
+
 // Send a message to Claude API
-async function sendToClaud(userMessage) {
+async function sendToClaude(userMessage) {
   if (!CLAUDE_API_KEY) {
     return '⚠️ API key not configured.\n\nSetup steps:\n1. Copy `js/config.example.js` to `js/config.js`\n2. Paste your Claude API key\n3. Reload the page';
   }
 
   chatHistory.push({ role: 'user', content: userMessage });
+
+  // Keep only the most recent messages to avoid token limit errors
+  if (chatHistory.length > MAX_HISTORY) {
+    chatHistory = chatHistory.slice(chatHistory.length - MAX_HISTORY);
+  }
 
   try {
     const response = await fetch(API_URL, {
@@ -140,7 +147,7 @@ async function handleSend() {
 
   const typingMsg = addMessage('생각 중...', 'bot typing');
 
-  const reply = await sendToClaud(text);
+  const reply = await sendToClaude(text);
 
   typingMsg.classList.remove('typing');
   typingMsg.innerHTML = renderMarkdown(reply);

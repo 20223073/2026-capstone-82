@@ -42,9 +42,6 @@ Calls the Claude API directly from the browser using `anthropic-dangerous-direct
 
 ## Known issues and pitfalls
 
-- **Enter key hint is a dead stub** — `#hint` shows "[Enter] 계속" but the `keydown` handler in `game.js:171` is empty. The hint is never actually functional in any current mission; do not add missions that rely on `waitingForEnter`.
-- **`chatHistory` is unbounded** — `chatbot.js` accumulates every message in `chatHistory[]` with no trim. Long sessions will eventually exceed the API's context window. Cap at ~20 messages if extending the chatbot.
-- **`background-image` CSS transition does not animate** — `style.css` declares `transition: background-image 0.5s ease` on `#background`, but browsers do not interpolate between two `background-image` values. Background changes are instant despite the transition rule.
 - **Nested `.git` in `korea-rpg/`** — `korea-rpg/` contains its own `.git` directory (it was originally a standalone repo). The outer repo treats it as a plain directory. Do not run git commands from inside `korea-rpg/` expecting them to affect the outer repo.
-- **`sendToClaud` typo** — the API call function in `chatbot.js` is named `sendToClaud` (missing final 'e'). Do not rename without updating all call sites.
 - **Global `button` selector** — `style.css` sets `width: 100%` on all `button` elements. Any new button added outside `#choices` needs an explicit `width: auto` override.
+- **`chatHistory` cap** — `chatbot.js` trims history to the last 20 messages (`MAX_HISTORY`). Adjust if needed, but keep it bounded to avoid token limit errors.

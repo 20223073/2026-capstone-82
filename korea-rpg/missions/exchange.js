@@ -10,7 +10,7 @@ const exchangeMission = {
 
   helperContext: `The player just arrived at Incheon International Airport.
 Their goal: find the currency exchange counter (환전소) and change US dollars to Korean won (KRW).
-Current exchange rate in the game: 1 USD ≈ 1,200 KRW.
+Current exchange rate in the game: 1 USD ≈ 1,380 KRW.
 The exchange counter requires showing a passport (여권).
 Airport exchanges have slightly worse rates than city banks, but are convenient.
 Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
@@ -49,7 +49,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     showRate: {
-      text: '환전소 직원: 현재 환율은 1달러에 1,200원입니다.',
+      text: '환전소 직원: 현재 환율은 1달러에 1,380원입니다.',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '좋네요, 환전해 주세요.', next: 'askAmount' }
@@ -67,7 +67,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     confirm100: {
-      text: '환전소 직원: 100달러요? 120,000원이 됩니다. 여권을 확인해도 될까요?',
+      text: '환전소 직원: 100달러요? 138,000원이 됩니다. 여권을 확인해도 될까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '(여권을 건넨다)', next: 'done' }
@@ -75,7 +75,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     confirm500: {
-      text: '환전소 직원: 500달러요? 600,000원이 됩니다. 여권을 확인해도 될까요?',
+      text: '환전소 직원: 500달러요? 690,000원이 됩니다. 여권을 확인해도 될까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '(여권을 건넨다)', next: 'done' }
@@ -83,7 +83,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     confirm1000: {
-      text: '환전소 직원: 1000달러요? 1,200,000원이 됩니다. 여권을 확인해도 될까요?',
+      text: '환전소 직원: 1000달러요? 1,380,000원이 됩니다. 여권을 확인해도 될까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '(여권을 건넨다)', next: 'done' }

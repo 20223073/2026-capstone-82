@@ -10,10 +10,14 @@ const lostfoundMission = {
 
   vocabulary: [
     { kr: '분실물 센터', en: 'lost and found center', rom: 'bun-sil-mul sen-teo' },
-    { kr: '휴대폰', en: 'mobile phone', rom: 'hyu-dae-pon' },
+    { kr: '잃어버렸어요', en: 'I lost (it)', rom: 'il-eo-beo-ryeo-sseo-yo' },
+    { kr: '게이트', en: 'gate (airport)', rom: 'ge-i-teu' },
+    { kr: '화장실', en: 'restroom / bathroom', rom: 'hwa-jang-sil' },
+    { kr: '모델', en: 'phone model / model number', rom: 'mo-del' },
+    { kr: '색깔', en: 'color', rom: 'saek-kkak' },
+    { kr: '잠시만요', en: 'Just a moment, please', rom: 'jam-si-man-yo' },
     { kr: '여권', en: 'passport', rom: 'yeo-gwon' },
     { kr: '서명', en: 'signature', rom: 'seo-myeong' },
-    { kr: '잃어버렸어요', en: 'I lost (it)', rom: 'il-eo-beo-ryeo-sseo-yo' },
   ],
 
   helperContext: `The player lost their phone at the airport and must retrieve it from the Lost and Found center (분실물 센터).
@@ -42,7 +46,7 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     },
 
     askPhone: {
-      text: '직원: 휴대폰 모델과 색깔을 알려주시겠어요?',
+      text: '직원: 휴대폰 [[모델|phone model|mo-del]]과 [[색깔|color|saek-kkak]]을 알려주시겠어요?',
       choices: [
         { label: '아이폰 15, 검정색이에요.', next: 'searching' },
         { label: '갤럭시 S24, 흰색이에요.', next: 'searching' }
@@ -50,7 +54,7 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     },
 
     searching: {
-      text: '직원: 잠시만요, 확인해볼게요. (컴퓨터를 확인한다)',
+      text: '직원: [[잠시만요|Just a moment, please|jam-si-man-yo]], 확인해볼게요. (컴퓨터를 확인한다)',
       choices: [
         { label: '(기다린다)', next: 'found' }
       ]

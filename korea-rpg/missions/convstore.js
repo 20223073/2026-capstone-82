@@ -12,8 +12,10 @@ const convstoreMission = {
     { kr: '편의점', en: 'convenience store', rom: 'pyeon-ui-jeom' },
     { kr: '교통 카드', en: 'T-money transit card', rom: 'gyo-tong ka-deu' },
     { kr: '충전', en: 'recharge / top-up', rom: 'chung-jeon' },
+    { kr: '있나요?', en: 'Do you have...? (polite)', rom: 'in-na-yo' },
+    { kr: '주세요', en: 'Please give me / I\'ll have...', rom: 'ju-se-yo' },
     { kr: '얼마예요?', en: 'How much is it?', rom: 'eol-ma-ye-yo' },
-    { kr: '감사합니다', en: 'Thank you (formal)', rom: 'gam-sa-ham-ni-da' },
+    { kr: '사용 가능', en: 'available / can be used', rom: 'sa-yong ga-neung' },
   ],
 
   // Context passed to the AI helper chatbot
@@ -93,14 +95,14 @@ Polite speech (존댓말) is expected when speaking to the clerk.`,
     },
 
     charge5000: {
-      text: '(5000원을 건넸다)\n편의점 사장: [[충전|recharge / top-up|chung-jeon]] 완료! 카드 2000원 + 충전 3000원 사용 가능합니다.',
+      text: '(5000원을 건넸다)\n편의점 사장: [[충전|recharge / top-up|chung-jeon]] 완료! 카드 2000원 + 충전 3000원 [[사용 가능|available for use|sa-yong ga-neung]]합니다.',
       choices: [
         { label: '감사합니다!', next: 'goodbye' }
       ]
     },
 
     charge10000: {
-      text: '(10000원을 건넸다)\n편의점 사장: [[충전|recharge / top-up|chung-jeon]] 완료! 카드 2000원 + 충전 8000원 사용 가능합니다.',
+      text: '(10000원을 건넸다)\n편의점 사장: [[충전|recharge / top-up|chung-jeon]] 완료! 카드 2000원 + 충전 8000원 [[사용 가능|available for use|sa-yong ga-neung]]합니다.',
       choices: [
         { label: '감사합니다!', next: 'goodbye' }
       ]

@@ -11,10 +11,15 @@ const immigrationMission = {
   vocabulary: [
     { kr: '외국인 등록', en: 'alien registration (ARC)', rom: 'oe-guk-in deung-nok' },
     { kr: '번호표', en: 'number ticket', rom: 'beon-ho-pyo' },
+    { kr: '대기실', en: 'waiting room', rom: 'dae-gi-sil' },
     { kr: '창구', en: 'service counter / window', rom: 'chang-gu' },
     { kr: '신청서', en: 'application form', rom: 'sin-cheong-seo' },
+    { kr: '주소 증명서', en: 'proof of address', rom: 'ju-so jeung-myeong-seo' },
+    { kr: '기숙사 증명서', en: 'dormitory certificate', rom: 'gi-suk-sa jeung-myeong-seo' },
+    { kr: '임대 계약서', en: 'rental contract', rom: 'im-dae gye-yak-seo' },
     { kr: '수수료', en: 'fee', rom: 'su-su-ryo' },
     { kr: '지문', en: 'fingerprint', rom: 'ji-mun' },
+    { kr: '발송', en: 'mailed / dispatched', rom: 'bal-song' },
   ],
 
   helperContext: `The player is at a Korean Immigration Office (출입국관리사무소) to apply for an Alien Registration Card (외국인등록증, ARC).
@@ -46,7 +51,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     takeNumber: {
-      text: '(번호표를 뽑았다: 42번)\n(대기실에서 기다린다...)',
+      text: '(번호표를 뽑았다: 42번)\n([[대기실|waiting room|dae-gi-sil]]에서 기다린다...)',
       choices: [
         { label: '(기다린다)', next: 'called' }
       ]
@@ -69,7 +74,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     checkDocs: {
-      text: '직원: 사진 한 장과 주소 증명서도 필요합니다. 가지고 오셨나요?',
+      text: '직원: 사진 한 장과 [[주소 증명서|proof of address|ju-so jeung-myeong-seo]]도 필요합니다. 가지고 오셨나요?',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '네, 여기 있습니다.', next: 'fee' },
@@ -78,7 +83,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     helpAddress: {
-      text: '직원: 기숙사 증명서나 임대 계약서도 괜찮아요.',
+      text: '직원: [[기숙사 증명서|dormitory certificate|gi-suk-sa jeung-myeong-seo]]나 [[임대 계약서|rental contract|im-dae gye-yak-seo]]도 괜찮아요.',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '아, 기숙사 증명서 있습니다!', next: 'fee' }
@@ -103,7 +108,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     done: {
-      text: '직원: 신청이 완료되었습니다! 카드는 2-4주 안에 주소지로 발송됩니다.',
+      text: '직원: 신청이 완료되었습니다! 카드는 2-4주 안에 [[주소지|your registered address|ju-so-ji]]로 [[발송|mailed / dispatched|bal-song]]됩니다.',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '[미션 완료] 메뉴로 돌아가기', next: 'END' }

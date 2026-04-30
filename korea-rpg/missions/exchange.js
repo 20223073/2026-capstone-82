@@ -9,11 +9,14 @@ const exchangeMission = {
   background: 'images/Airport.png',
 
   vocabulary: [
-    { kr: '어서오세요', en: 'Welcome! (common shop greeting)', rom: 'eo-seo-o-se-yo' },
     { kr: '환전소', en: 'currency exchange counter', rom: 'hwan-jeon-so' },
+    { kr: '환전하다', en: 'to exchange currency', rom: 'hwan-jeon-ha-da' },
     { kr: '환율', en: 'exchange rate', rom: 'hwan-nyul' },
+    { kr: '직진', en: 'go straight', rom: 'jik-jin' },
     { kr: '여권', en: 'passport', rom: 'yeo-gwon' },
-    { kr: '원 (₩)', en: 'Korean won (KRW)', rom: 'won' },
+    { kr: '확인', en: 'confirmation / to verify', rom: 'hwa-gin' },
+    { kr: '얼마예요?', en: 'How much is it?', rom: 'eol-ma-ye-yo' },
+    { kr: '어서오세요', en: 'Welcome! (shop greeting)', rom: 'eo-seo-o-se-yo' },
   ],
 
   helperContext: `The player just arrived at Incheon International Airport.
@@ -33,7 +36,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     directions: {
-      text: '공항 안내원: [[환전소|currency exchange counter|hwan-jeon-so]]는 바로 저쪽입니다! 직진하다가 왼쪽으로 꺾으면 보일 거예요.',
+      text: '공항 안내원: [[환전소|currency exchange counter|hwan-jeon-so]]는 바로 저쪽입니다! [[직진|go straight|jik-jin]]하다가 왼쪽으로 꺾으면 보일 거예요.',
       choices: [
         { label: '감사합니다! 가보겠습니다.', next: 'arrive' }
       ]
@@ -65,7 +68,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     askAmount: {
-      text: '환전소 직원: 얼마를 환전해 드릴까요?',
+      text: '환전소 직원: [[얼마|how much|eol-ma]]를 [[환전|exchange|hwan-jeon]]해 드릴까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '100달러', next: 'confirm100' },

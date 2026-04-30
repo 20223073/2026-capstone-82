@@ -18,7 +18,7 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
 
   steps: {
     start: {
-      text: '분실물 센터 직원: 안녕하세요. 무엇을 도와드릴까요?',
+      text: '분실물 센터 직원: 안녕하세요. [[무엇을 도와드릴까요|How may I help you?|mu-eo-seul do-wa-deu-ril-kka-yo]]?',
       choices: [
         { label: '휴대폰을 잃어버렸어요.', next: 'askDetails' },
         { label: '분실물을 찾으러 왔습니다.', next: 'askDetails' }
@@ -49,14 +49,14 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     },
 
     found: {
-      text: '직원: 아, 찾았습니다! 여권을 보여주시겠어요?',
+      text: '직원: 아, 찾았습니다! [[여권|passport|yeo-gwon]]을 보여주시겠어요?',
       choices: [
         { label: '(여권을 건넨다)', next: 'sign' }
       ]
     },
 
     sign: {
-      text: '직원: 확인되었습니다. 여기 서명해 주세요.',
+      text: '직원: 확인되었습니다. 여기 [[서명|signature|seo-myeong]]해 주세요.',
       choices: [
         { label: '(서명한다)', next: 'receive' }
       ]

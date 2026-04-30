@@ -17,7 +17,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
 
   steps: {
     start: {
-      text: '공항 안내원: 어서오세요! 한국에 오신 것을 환영합니다!',
+      text: '공항 안내원: [[어서오세요|Welcome! (common shop greeting)|eo-seo-o-se-yo]]! 한국에 오신 것을 환영합니다!',
       choices: [
         { label: '감사합니다! 환전소를 찾고 있어요.', next: 'directions' },
         { label: '(주변을 둘러본다)', next: 'lookAround' }
@@ -25,7 +25,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     directions: {
-      text: '공항 안내원: 환전소는 바로 저쪽입니다! 직진하다가 왼쪽으로 꺾으면 보일 거예요.',
+      text: '공항 안내원: [[환전소|currency exchange counter|hwan-jeon-so]]는 바로 저쪽입니다! 직진하다가 왼쪽으로 꺾으면 보일 거예요.',
       choices: [
         { label: '감사합니다! 가보겠습니다.', next: 'arrive' }
       ]
@@ -49,7 +49,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     showRate: {
-      text: '환전소 직원: 현재 환율은 1달러에 1,380원입니다.',
+      text: '환전소 직원: 현재 [[환율|exchange rate|hwan-nyul]]은 1달러에 1,380원입니다.',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '좋네요, 환전해 주세요.', next: 'askAmount' }
@@ -67,7 +67,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     confirm100: {
-      text: '환전소 직원: 100달러요? 138,000원이 됩니다. 여권을 확인해도 될까요?',
+      text: '환전소 직원: 100달러요? 138,000원이 됩니다. [[여권|passport|yeo-gwon]]을 확인해도 될까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '(여권을 건넨다)', next: 'done' }
@@ -75,7 +75,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     confirm500: {
-      text: '환전소 직원: 500달러요? 690,000원이 됩니다. 여권을 확인해도 될까요?',
+      text: '환전소 직원: 500달러요? 690,000원이 됩니다. [[여권|passport|yeo-gwon]]을 확인해도 될까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '(여권을 건넨다)', next: 'done' }
@@ -83,7 +83,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     },
 
     confirm1000: {
-      text: '환전소 직원: 1000달러요? 1,380,000원이 됩니다. 여권을 확인해도 될까요?',
+      text: '환전소 직원: 1000달러요? 1,380,000원이 됩니다. [[여권|passport|yeo-gwon]]을 확인해도 될까요?',
       background: 'images/MoneyExchange.png',
       choices: [
         { label: '(여권을 건넨다)', next: 'done' }

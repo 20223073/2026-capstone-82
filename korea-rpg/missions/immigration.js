@@ -30,7 +30,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     explain: {
-      text: '안내원: 괜찮아요. 외국인 등록이시면, 저기서 번호표를 뽑고 기다리시면 됩니다.',
+      text: '안내원: 괜찮아요. [[외국인 등록|alien registration|oe-guk-in deung-nok]]이시면, 저기서 [[번호표|number ticket|beon-ho-pyo]]를 뽑고 기다리시면 됩니다.',
       choices: [
         { label: '감사합니다!', next: 'takeNumber' }
       ]
@@ -44,7 +44,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     called: {
-      text: '"42번 고객님, 3번 창구로 와주세요."',
+      text: '"42번 고객님, 3번 [[창구|service counter|chang-gu]]로 와주세요."',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '(창구로 간다)', next: 'submitDocs' }
@@ -52,7 +52,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     submitDocs: {
-      text: '직원: 안녕하세요. 외국인 등록 신청서와 여권을 주시겠어요?',
+      text: '직원: 안녕하세요. [[외국인 등록|alien registration|oe-guk-in deung-nok]] [[신청서|application form|sin-cheong-seo]]와 [[여권|passport|yeo-gwon]]을 주시겠어요?',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '(서류와 여권을 건넨다)', next: 'checkDocs' }
@@ -77,7 +77,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     fee: {
-      text: '직원: 수수료 30,000원 납부 부탁드립니다.',
+      text: '직원: [[수수료|fee|su-su-ryo]] 30,000원 납부 부탁드립니다.',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '(카드로 결제한다)', next: 'fingerprint' },
@@ -86,7 +86,7 @@ Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
     },
 
     fingerprint: {
-      text: '직원: 이제 지문과 사진을 찍겠습니다. 이쪽으로 오세요.',
+      text: '직원: 이제 [[지문|fingerprint|ji-mun]]과 사진을 찍겠습니다. 이쪽으로 오세요.',
       background: 'images/Immigration_RegDesk.png',
       choices: [
         { label: '(지문을 찍고 사진을 찍는다)', next: 'done' }

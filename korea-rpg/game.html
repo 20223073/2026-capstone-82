@@ -8,6 +8,7 @@
 </head>
 <body>
 
+<div id="mission-hud"><span id="hud-title"></span></div>
 <button id="back-btn" onclick="window.location.href='index.html'">← 메뉴로 · Menu</button>
 
 <div id="game">
@@ -26,11 +27,17 @@
   <div class="popup-box">
     <h2>미션 완료</h2>
     <p>성공적으로 완료했습니다</p>
-    <p>[Enter]를 눌러 메뉴로 돌아가기</p>
+    <button id="popup-return-btn" onclick="window.location.href='index.html'">메뉴로 돌아가기 →</button>
+    <p>[Enter]를 눌러도 됩니다</p>
   </div>
 </div>
 
 <button id="chatbot-toggle" title="AI 도우미 · Helper">💬</button>
+
+<div id="tooltip-popup">
+  <div class="tp-en"></div>
+  <div class="tp-rom"></div>
+</div>
 
 <div id="chatbot-panel">
   <div id="chatbot-header">

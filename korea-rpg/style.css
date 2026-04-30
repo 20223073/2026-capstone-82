@@ -43,6 +43,14 @@ body {
   line-height: 1.5;
 }
 
+/* Menu page subtle gradient background */
+.menu-page {
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 5%, rgba(102, 126, 234, 0.09) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 45% at 85% 95%, rgba(118, 75, 162, 0.08) 0%, transparent 60%),
+    #FAFAFA;
+}
+
 /* ===================================================================
    MENU SCREEN
    =================================================================== */
@@ -117,8 +125,8 @@ h1 {
 
 .progress-fill {
   height: 100%;
-  background: var(--text);
-  transition: width 0.4s ease;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 999px;
 }
 
@@ -149,6 +157,22 @@ h1 {
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes choiceFadeIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.30; }
+  50% { opacity: 0.70; }
+}
+
+@keyframes popIconBounce {
+  from { opacity: 0; transform: scale(0.5) rotate(-15deg); }
+  60% { transform: scale(1.15) rotate(5deg); }
+  to { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
 .mission-card:hover {
@@ -199,6 +223,12 @@ h1 {
 .mission-status.cleared {
   background: var(--success-bg);
   color: var(--success);
+}
+
+.mission-card.cleared {
+  background: linear-gradient(135deg, #f4fdf6 0%, #ffffff 100%);
+  border-color: rgba(52, 199, 89, 0.30);
+  border-left: 3px solid var(--success);
 }
 
 .footer {
@@ -348,7 +378,12 @@ button:active {
   display: flex;
   align-items: center;
   gap: 12px;
+  animation: choiceFadeIn 0.22s ease backwards;
 }
+
+#choices button:nth-child(2) { animation-delay: 60ms; }
+#choices button:nth-child(3) { animation-delay: 120ms; }
+#choices button:nth-child(4) { animation-delay: 180ms; }
 
 #choices button:hover {
   background: rgba(255, 255, 255, 0.12);
@@ -392,6 +427,40 @@ button:active {
   display: none;
   margin-top: 10px;
   letter-spacing: 0.02em;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+
+/* ===================================================================
+   MISSION HUD (top bar in game screen)
+   =================================================================== */
+
+#mission-hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  animation: fadeIn 0.4s ease;
+}
+
+#hud-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80vw;
 }
 
 /* ===================================================================
@@ -400,7 +469,7 @@ button:active {
 
 #back-btn {
   position: fixed;
-  top: 20px;
+  top: 52px;
   left: 20px;
   padding: 8px 14px;
   background: rgba(0, 0, 0, 0.45);
@@ -481,7 +550,26 @@ button:active {
 .popup-box p:last-of-type {
   font-size: 13px;
   color: var(--text-subtle);
+  margin-top: 12px;
+}
+
+#popup-return-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 13px 32px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  width: auto;
   margin-top: 24px;
+  letter-spacing: -0.01em;
+}
+
+#popup-return-btn:hover {
+  background: #005ec4;
+  transform: none;
 }
 
 /* ===================================================================
@@ -692,6 +780,59 @@ button:active {
 }
 
 /* ===================================================================
+   TOOLTIP (clickable Korean vocabulary words)
+   =================================================================== */
+
+.tooltip-word {
+  color: #a9d4ff;
+  border-bottom: 1px dotted rgba(169, 212, 255, 0.45);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tooltip-word:hover {
+  color: #c8e4ff;
+  border-bottom-color: rgba(169, 212, 255, 0.85);
+}
+
+#tooltip-popup {
+  position: fixed;
+  display: none;
+  background: rgba(8, 8, 24, 0.96);
+  border: 1px solid rgba(169, 212, 255, 0.22);
+  border-radius: 10px;
+  padding: 10px 14px;
+  z-index: 300;
+  max-width: 230px;
+  min-width: 90px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  animation: tooltipIn 0.15s ease;
+}
+
+@keyframes tooltipIn {
+  from { opacity: 0; transform: translateY(5px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.tp-en {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a9d4ff;
+  line-height: 1.4;
+  margin-bottom: 3px;
+}
+
+.tp-rom {
+  font-size: 11px;
+  color: rgba(200, 200, 230, 0.58);
+  font-style: italic;
+  letter-spacing: 0.03em;
+}
+
+/* ===================================================================
    RESPONSIVE
    =================================================================== */
 
@@ -700,6 +841,10 @@ button:active {
   .subtitle { font-size: 16px; margin-bottom: 32px; }
   .missions { grid-template-columns: 1fr; }
   .mission-card { padding: 24px 20px; }
+
+  #mission-hud { height: 40px; }
+  #hud-title { font-size: 10px; }
+  #back-btn { top: 48px; }
 
   #dialogue { padding: 12px 20px 20px; }
   #text { font-size: 15px; }

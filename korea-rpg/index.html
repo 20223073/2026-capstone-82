@@ -6,7 +6,7 @@
 <title>Korea Life RPG</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="menu-page">
 
 <div class="menu-container">
 
@@ -26,28 +26,28 @@
 
   <div class="missions">
 
-    <div class="mission-card" onclick="goMission('exchange')">
+    <div class="mission-card" id="card-exchange" onclick="goMission('exchange')">
       <span class="mission-status" id="status-exchange">미완료</span>
       <span class="mission-icon">💱</span>
       <div class="mission-title">공항 환전</div>
       <div class="mission-desc">Exchange dollars to won at the airport</div>
     </div>
 
-    <div class="mission-card" onclick="goMission('lostfound')">
+    <div class="mission-card" id="card-lostfound" onclick="goMission('lostfound')">
       <span class="mission-status" id="status-lostfound">미완료</span>
       <span class="mission-icon">📱</span>
       <div class="mission-title">공항 분실물 센터</div>
       <div class="mission-desc">Recover your lost phone at Lost & Found</div>
     </div>
 
-    <div class="mission-card" onclick="goMission('immigration')">
+    <div class="mission-card" id="card-immigration" onclick="goMission('immigration')">
       <span class="mission-status" id="status-immigration">미완료</span>
       <span class="mission-icon">🏛️</span>
       <div class="mission-title">출입국관리사무소</div>
       <div class="mission-desc">Apply for your Alien Registration Card</div>
     </div>
 
-    <div class="mission-card" onclick="goMission('convstore')">
+    <div class="mission-card" id="card-convstore" onclick="goMission('convstore')">
       <span class="mission-status" id="status-convstore">미완료</span>
       <span class="mission-icon">🏪</span>
       <div class="mission-title">편의점</div>
@@ -66,9 +66,11 @@ function loadStatus() {
 
   missions.forEach(m => {
     const el = document.getElementById('status-' + m);
+    const card = document.getElementById('card-' + m);
     if (localStorage.getItem('cleared_' + m) === 'true') {
       el.textContent = '클리어';
       el.classList.add('cleared');
+      if (card) card.classList.add('cleared');
       done++;
     }
   });

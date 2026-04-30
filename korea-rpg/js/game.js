@@ -32,6 +32,64 @@ const missionCompleteEl = document.getElementById('missionComplete');
 let activeChoices = [];
 
 // ===================================================================
+// Tooltip popup — set up once via event delegation on textEl
+// ===================================================================
+const tooltipEl = document.getElementById('tooltip-popup');
+let tooltipTimer = null;
+
+textEl.addEventListener('click', (e) => {
+  const word = e.target.closest('.tooltip-word');
+  if (word) showTooltip(word);
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.tooltip-word') && !e.target.closest('#tooltip-popup')) {
+    if (tooltipEl) tooltipEl.style.display = 'none';
+  }
+});
+
+function showTooltip(wordEl) {
+  if (!tooltipEl) return;
+  tooltipEl.querySelector('.tp-en').textContent = wordEl.dataset.en;
+  const romEl = tooltipEl.querySelector('.tp-rom');
+  const rom = wordEl.dataset.rom || '';
+  romEl.textContent = rom;
+  romEl.style.display = rom ? 'block' : 'none';
+
+  tooltipEl.style.animation = 'none';
+  tooltipEl.style.display = 'block';
+  tooltipEl.offsetHeight;
+  tooltipEl.style.animation = '';
+
+  const rect = wordEl.getBoundingClientRect();
+  const w = tooltipEl.offsetWidth;
+  const h = tooltipEl.offsetHeight;
+  let left = rect.left + rect.width / 2 - w / 2;
+  let top = rect.top - h - 10;
+  left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+  if (top < 8) top = rect.bottom + 10;
+  tooltipEl.style.left = left + 'px';
+  tooltipEl.style.top = top + 'px';
+
+  clearTimeout(tooltipTimer);
+  tooltipTimer = setTimeout(() => { tooltipEl.style.display = 'none'; }, 3000);
+}
+
+// ===================================================================
+// Parse [[Korean|English|romanization]] tooltip markers.
+// Returns display text (plain) and html (with <span> wrappers).
+// ===================================================================
+function parseTooltips(text) {
+  const display = text.replace(/\[\[([^\]|]+)(?:\|[^\]]+)*\]\]/g, '$1');
+  const html = text
+    .replace(/\[\[([^\]|]+)\|([^\]|]+)\|([^\]|]+)\]\]/g,
+      '<span class="tooltip-word" data-en="$2" data-rom="$3">$1</span>')
+    .replace(/\[\[([^\]|]+)\|([^\]|]+)\]\]/g,
+      '<span class="tooltip-word" data-en="$2">$1</span>');
+  return { display, html };
+}
+
+// ===================================================================
 // Parse NPC name from dialog text
 // Format: "NPC Name: dialogue text" — narration lines start with (
 // ===================================================================
@@ -65,6 +123,7 @@ function parseDialog(text) {
 // that would append characters after a skip.
 // ===================================================================
 function typeText(text, callback) {
+  const { display, html } = parseTooltips(text);
   textEl.textContent = '';
   let i = 0;
   let cancelled = false;
@@ -72,10 +131,11 @@ function typeText(text, callback) {
 
   function step() {
     if (cancelled) return;
-    if (i < text.length) {
-      textEl.textContent += text[i++];
+    if (i < display.length) {
+      textEl.textContent += display[i++];
       setTimeout(step, 30);
     } else {
+      textEl.innerHTML = html;
       isTyping = false;
       if (callback) callback();
     }
@@ -86,13 +146,17 @@ function typeText(text, callback) {
   const skip = () => {
     if (isTyping) {
       cancelled = true;
-      textEl.textContent = text;
+      textEl.innerHTML = html;
       isTyping = false;
       if (callback) callback();
     }
   };
 
-  textEl.onclick = skip;
+  // Tooltip word clicks must not trigger skip
+  textEl.onclick = (e) => {
+    if (e.target.closest('.tooltip-word')) return;
+    skip();
+  };
   textEl._skipFn = skip;
 }
 
@@ -268,6 +332,10 @@ function startMission(missionId) {
 
   // Set initial background
   bgEl.style.backgroundImage = `url('${currentMission.background}')`;
+
+  // Update HUD title
+  const hudTitle = document.getElementById('hud-title');
+  if (hudTitle) hudTitle.textContent = currentMission.title;
 
   // Tell chatbot about this mission (for context)
   if (window.chatbotSetContext) {

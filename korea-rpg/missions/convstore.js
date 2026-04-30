@@ -53,7 +53,7 @@ Polite speech (존댓말) is expected when speaking to the clerk.`,
     },
 
     askCard: {
-      text: '편의점 사장: 그런데 혹시 교통 카드 필요하신가요?',
+      text: '편의점 사장: 그런데 혹시 [[교통 카드|T-money transit card|gyo-tong ka-deu]] 필요하신가요?',
       choices: [
         { label: '아, 맞다! 필요했어요.', next: 'showCard' },
         { label: '아니요, 이미 있어요.', next: 'browse' }
@@ -77,7 +77,7 @@ Polite speech (존댓말) is expected when speaking to the clerk.`,
     },
 
     price: {
-      text: '편의점 사장: 카드는 2000원입니다. 충전도 여기서 바로 해드려요!',
+      text: '편의점 사장: 카드는 2000원입니다. [[충전|recharge / top-up|chung-jeon]]도 여기서 바로 해드려요!',
       choices: [
         { label: '5000원 충전해 주세요.', next: 'charge5000' },
         { label: '10000원 충전해 주세요.', next: 'charge10000' }
@@ -85,14 +85,14 @@ Polite speech (존댓말) is expected when speaking to the clerk.`,
     },
 
     charge5000: {
-      text: '(5000원을 건넸다)\n편의점 사장: 충전 완료! 카드 2000원 + 충전 3000원 사용 가능합니다.',
+      text: '(5000원을 건넸다)\n편의점 사장: [[충전|recharge / top-up|chung-jeon]] 완료! 카드 2000원 + 충전 3000원 사용 가능합니다.',
       choices: [
         { label: '감사합니다!', next: 'goodbye' }
       ]
     },
 
     charge10000: {
-      text: '(10000원을 건넸다)\n편의점 사장: 충전 완료! 카드 2000원 + 충전 8000원 사용 가능합니다.',
+      text: '(10000원을 건넸다)\n편의점 사장: [[충전|recharge / top-up|chung-jeon]] 완료! 카드 2000원 + 충전 8000원 사용 가능합니다.',
       choices: [
         { label: '감사합니다!', next: 'goodbye' }
       ]

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running the game
 
-No build step required. Open `korea-rpg/index.html` directly in a browser (double-click or `open korea-rpg/index.html`).
+No build step required. Open `index.html` directly in a browser (double-click or `open index.html`). The `korea-rpg/` subdirectory is a legacy copy of an earlier standalone version with its own `.git`.
 
 For the AI chatbot to work, copy `js/config.example.js` → `js/config.js` and paste a Claude API key. `config.js` is gitignored and must never be committed.
 
@@ -17,7 +17,7 @@ This is a pure HTML/CSS/Vanilla-JS game — no framework, no bundler, no npm.
 - `game.html` — universal game screen used for all missions. Reads the `?mission=` URL param and calls `startMission(id)`.
 
 ### Script loading order in game.html
-All four mission files load first (they define globals like `convstoreMission`), then `game.js` (which reads those globals into `allMissions`), then `config.js`, then `chatbot.js`. Order matters — do not reorder these `<script>` tags.
+All nine mission files load first (they define globals like `convstoreMission`), then `game.js` (which reads those globals into `allMissions`), then `config.js`, then `chatbot.js`. Order matters — do not reorder these `<script>` tags.
 
 ### Game engine (`js/game.js`)
 - `allMissions` — registry mapping mission ID strings to mission objects (defined in each `missions/*.js` file).
@@ -56,6 +56,50 @@ Calls the Claude API directly from the browser using `anthropic-dangerous-direct
    - `onclick="goMission('<id>')"`
    - `id="status-<id>"` on the status `<span>` inside the card
 6. Add `'<id>'` to the `missions` array inside `loadStatus()` in `index.html`.
+
+## Scene-based missions (`sceneFn`)
+
+Five missions (subway, bank, telecom, clothing, realestate) use a **scene-based** pattern instead of the `steps` object. Their mission objects have a `sceneFn()` method instead of `steps`.
+
+### How scene-based missions work
+
+`game.js` exposes these globals for use inside `sceneFn`:
+
+| Helper | Purpose |
+|---|---|
+| `typeText(text, cb)` | Typewriter effect; click to skip |
+| `addChoice(text, val)` | Add a choice button; fires `waitForChoice` callback with `val` |
+| `waitForChoice(cb)` | Next button click calls `cb(val)` |
+| `waitEnterThen(cb)` | Show `[Enter] 계속` hint; Enter calls `cb()` |
+| `clearChoices()` | Clear buttons + hint |
+| `changeBackground(img)` | Set `#background` image URL |
+| `showMissionComplete()` | Show completion popup + save progress |
+
+Inside `sceneFn`, define a local `scenes` object and a `go(name)` helper:
+```js
+sceneFn() {
+  const scenes = {};
+  const go = name => { clearChoices(); scenes[name](); };
+  const enterGo = name => waitEnterThen(() => go(name));
+
+  scenes.start = () => {
+    changeBackground('images/foo.png');
+    typeText('Hello!', () => enterGo('next'));
+  };
+  scenes.next = () => { ... };
+
+  go('start');
+}
+```
+
+State variables (e.g. `let hasARC = true`) live in the closure and persist across scenes.
+
+### Adding a new scene-based mission
+
+Same checklist as a step-based mission (see "Adding a new mission" above), but:
+- The mission object needs `sceneFn()` instead of `steps`.
+- Reference images as `'images/<filename>'`.
+- Do **not** call `localStorage.setItem(...)` or `window.location.href` inside the mission — `game.js` handles both.
 
 ## Known issues and pitfalls
 

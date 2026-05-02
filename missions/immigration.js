@@ -20,6 +20,16 @@ The process:
 6. The card is mailed to your address in 2-4 weeks
 Polite speech (존댓말) is essential. Be patient — wait times can be long.`,
 
+  vocabulary: [
+    { kr: '출입국관리사무소', en: 'immigration office', rom: 'churipguk gwanri samusso' },
+    { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', rom: 'oegugin deungnokjeung' },
+    { kr: '번호표', en: 'queue number ticket', rom: 'beonhopyo' },
+    { kr: '창구', en: 'service counter / window', rom: 'changgu' },
+    { kr: '수수료', en: 'fee / service charge', rom: 'susuryo' },
+    { kr: '지문', en: 'fingerprint', rom: 'jimun' },
+    { kr: '여권', en: 'passport', rom: 'yeogwon' },
+  ],
+
   steps: {
     start: {
       text: '(출입국관리사무소에 도착했다)\n안내원: 안녕하세요. 어떤 업무로 오셨나요?',

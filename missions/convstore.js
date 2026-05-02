@@ -16,6 +16,15 @@ A blank T-money card costs 2,000-4,000 KRW.
 After buying, you can recharge (충전) at the counter with cash — typically 5,000-10,000 KRW to start.
 Polite speech (존댓말) is expected when speaking to the clerk.`,
 
+  vocabulary: [
+    { kr: '편의점', en: 'convenience store', rom: 'pyeoneuijeom' },
+    { kr: '교통카드', en: 'transit card (T-money)', rom: 'gyotong kada' },
+    { kr: '충전', en: 'recharge / top-up', rom: 'chungjeon' },
+    { kr: '사장', en: 'owner / store manager', rom: 'sajang' },
+    { kr: '계산', en: 'payment / checkout', rom: 'gyesan' },
+    { kr: '존댓말', en: 'polite speech (formal Korean)', rom: 'jondaetmal' },
+  ],
+
   // Dialog flow: each step returns { text, choices, background, isEnd }
   // 'choices' is an array of { label, nextStep } — if empty, press Enter to advance
   steps: {

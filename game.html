@@ -8,7 +8,22 @@
 </head>
 <body>
 
-<button id="back-btn" onclick="window.location.href='index.html'">← 메뉴로 · Menu</button>
+<div id="mission-hud">
+  <button id="back-btn" onclick="window.location.href='index.html'">← 메뉴</button>
+  <span id="hud-title"></span>
+  <div class="hud-spacer"></div>
+</div>
+
+<!-- Vocabulary screen shown before mission starts -->
+<div id="vocab-screen">
+  <div id="vocab-panel">
+    <div id="vocab-mission-label" class="vocab-eyebrow"></div>
+    <h2 class="vocab-heading">오늘의 핵심 단어 · Key Vocabulary</h2>
+    <p class="vocab-hint">단어를 클릭하면 영어 뜻이 나옵니다 · Click a word to reveal its meaning</p>
+    <div id="vocab-grid"></div>
+    <button id="vocab-start-btn">시작하기 · Start Mission →</button>
+  </div>
+</div>
 
 <div id="game">
   <div id="background"></div>
@@ -46,6 +61,11 @@
 <script src="missions/exchange.js"></script>
 <script src="missions/lostfound.js"></script>
 <script src="missions/immigration.js"></script>
+<script src="missions/subway.js"></script>
+<script src="missions/bank.js"></script>
+<script src="missions/telecom.js"></script>
+<script src="missions/clothing.js"></script>
+<script src="missions/realestate.js"></script>
 
 <script src="js/game.js"></script>
 <script src="js/config.js"></script>

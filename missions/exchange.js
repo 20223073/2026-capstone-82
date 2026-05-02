@@ -15,6 +15,15 @@ The exchange counter requires showing a passport (여권).
 Airport exchanges have slightly worse rates than city banks, but are convenient.
 Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
 
+  vocabulary: [
+    { kr: '환전소', en: 'currency exchange counter', rom: 'hwanjeonso' },
+    { kr: '환율', en: 'exchange rate', rom: 'hwanyul' },
+    { kr: '여권', en: 'passport', rom: 'yeogwon' },
+    { kr: '원', en: 'Korean won (KRW)', rom: 'won' },
+    { kr: '달러', en: 'US dollar (USD)', rom: 'dalleo' },
+    { kr: '안내원', en: 'information staff / guide', rom: 'annaewon' },
+  ],
+
   steps: {
     start: {
       text: '공항 안내원: 어서오세요! 한국에 오신 것을 환영합니다!',

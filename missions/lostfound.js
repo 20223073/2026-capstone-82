@@ -16,6 +16,15 @@ At Korean Lost and Found, you must:
 4. Sign a receipt form when you collect the item
 Staff expect polite speech (존댓말). If the item isn't there, they'll ask you to check back later.`,
 
+  vocabulary: [
+    { kr: '분실물 센터', en: 'lost and found center', rom: 'bunsilmul senteo' },
+    { kr: '휴대폰', en: 'mobile phone / smartphone', rom: 'hyudaepon' },
+    { kr: '잃어버리다', en: 'to lose (something)', rom: 'ireobŏrida' },
+    { kr: '여권', en: 'passport', rom: 'yeogwon' },
+    { kr: '서명', en: 'signature', rom: 'seomyeong' },
+    { kr: '게이트', en: 'airport gate', rom: 'geiteu' },
+  ],
+
   steps: {
     start: {
       text: '분실물 센터 직원: 안녕하세요. 무엇을 도와드릴까요?',

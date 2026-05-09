@@ -1,64 +1,130 @@
-# 한국 생활 RPG — Korea Life RPG
+# 🇰🇷 Korea Life RPG
 
-A 2D cultural guide game for foreigners in Korea, built with HTML/CSS/JS.
+> An interactive cultural guide game that teaches foreigners how to navigate everyday life in Korea — through branching dialogue, real Korean vocabulary, and AI-powered help.
 
-## 🚀 How to run
+Built with **pure HTML / CSS / Vanilla JavaScript** — no framework, no build step.
 
-1. Open `index.html` in a web browser — that's it!
-2. For chatbot to work, you need to add your Claude API key (see below)
+---
 
-## 🔑 Chatbot setup (one-time)
+## What is this?
 
-1. Get a Claude API key from https://console.anthropic.com
-2. Copy `js/config.example.js` and rename the copy to `js/config.js`
-3. Open `js/config.js` and paste your API key
-4. Done! The chatbot will work.
+Korea Life RPG puts players in realistic Korean situations: exchanging money at the airport, riding the subway, opening a bank account, seeing a doctor, and more. Each mission teaches practical Korean phrases and cultural knowledge through conversation choices.
 
-⚠️ **Important:** `js/config.js` is in `.gitignore` — never commit your API key to GitHub. Each team member should create their own `config.js`.
+Two modes are available:
+- **단기 방문 (Short-term visit)** — 7 missions for travellers (Airport → Shopping)
+- **장기 거주 (Long-term residence)** — 12 missions for residents (Airport → Moving in)
 
-## 📁 Project structure
+Missions unlock sequentially — complete each step before advancing to the next.
+
+---
+
+## Missions
+
+| # | Mission | Korean | Mode |
+|---|---------|--------|------|
+| 1 | Airport Currency Exchange | 공항 환전 | Both |
+| 2 | Lost and Found | 분실물 센터 | Both |
+| 3 | Convenience Store | 편의점 | Both |
+| 4 | Seoul Subway | 지하철 타기 | Both |
+| 5 | Telecom / SIM Card | 통신사 유심 개통 | Long-term |
+| 6 | Immigration Office (ARC) | 출입국관리사무소 | Long-term |
+| 7 | Bank Account Opening | 은행 통장 개설 | Long-term |
+| 8 | Finding an Apartment | 부동산 — 집 구하기 | Long-term |
+| 9 | Garbage Bag Purchase | 쓰레기 봉투 구매 | Long-term |
+| 10 | Hospital Visit | 병원 진료 받기 | Both |
+| 11 | Pharmacy | 약국에서 약 구매 | Both |
+| 12 | Clothing Store Refund | 옷 가게 환불/교환 | Both |
+
+---
+
+## Features
+
+- **Branching dialogue** — choices affect conversation flow and outcomes
+- **Vocabulary flashcards** — key Korean words shown before each mission with romanisation
+- **In-dialogue tooltips** — tap any highlighted word mid-scene to see its English meaning
+- **AI chatbot** — context-aware Claude assistant available during every mission
+- **Progress tracking** — completed missions saved to `localStorage`; progress bar on menu
+- **Visit mode** — separate mission tracks for short-term visitors and long-term residents
+- **User profile** — one-time registration (nationality, age, purpose of stay, arrival date)
+- **Mobile-friendly** — portrait-mode crop anchors per image so characters stay in frame
+
+---
+
+## Getting started
+
+No installation required.
+
+```bash
+# Just open the file in any modern browser
+open index.html
+```
+
+### Enable the AI chatbot (optional)
+
+1. Get a free API key at [console.anthropic.com](https://console.anthropic.com)
+2. Copy the template: `cp js/config.example.js js/config.js`
+3. Open `js/config.js` and paste your key
+4. Refresh — the 💬 button in-game will now work
+
+> `js/config.js` is git-ignored. Never commit your API key. Each team member creates their own local copy.
+
+---
+
+## Project structure
 
 ```
-korea-rpg/
-├── index.html              ← Main menu (start here)
-├── game.html               ← Universal game screen (used for all missions)
-├── style.css               ← All styling
-├── .gitignore              ← Excludes config.js (API keys)
+├── index.html          ← Main menu (mode tabs, progress bar, mission cards)
+├── game.html           ← Universal game screen for all missions
+├── style.css           ← All styling (menu + game in one file)
 │
 ├── js/
-│   ├── game.js             ← Core game engine
-│   ├── chatbot.js          ← AI helper (Claude API)
-│   ├── config.example.js   ← Template for API key (safe to commit)
-│   └── config.js           ← YOUR API key (NOT committed to GitHub)
+│   ├── game.js         ← Core engine (typewriter, choices, vocab tooltips, background crop)
+│   ├── chatbot.js      ← AI helper (Claude API, context per mission)
+│   ├── config.example.js
+│   └── config.js       ← API key — NOT committed (git-ignored)
 │
-├── missions/               ← One file per mission
-│   ├── convstore.js
+├── missions/           ← One JS file per mission (12 total)
 │   ├── exchange.js
+│   ├── lostfound.js
+│   ├── convstore.js
+│   ├── subway.js
+│   ├── telecom.js
 │   ├── immigration.js
-│   └── lostfound.js
+│   ├── bank.js
+│   ├── realestate.js
+│   ├── garbage.js
+│   ├── hospital.js
+│   ├── pharmacy.js
+│   └── clothing.js
 │
-└── images/                 ← Scene backgrounds
+└── images/             ← Scene backgrounds (~2400×1700 px landscape)
 ```
 
-## ✨ Features
+---
 
-- 4 interactive missions teaching Korean daily life
-- Branching dialog system with multiple-choice responses
-- AI chatbot powered by Claude (context-aware per mission)
-- Progress tracking (localStorage)
-- Mobile responsive design
-- Minimalist Apple/Airbnb-style UI
+## Adding a new mission
 
-## ➕ How to add a new mission
+1. Create `missions/<id>.js` — use `missions/hospital.js` as a template (scene-based format)
+2. Add background images to `images/`
+3. Register in `js/game.js` → `allMissions` object
+4. Add `<script src="missions/<id>.js">` in `game.html` before `game.js`
+5. Add a `.mission-card` div in `index.html` with `id="card-<id>"` and `id="status-<id>"`
+6. Add `'<id>'` to `ALL_MISSIONS` and `MODE_CONFIG` in the inline script of `index.html`
+7. Add `'<id>': '미션 이름'` to the `MISSION_NAMES` object
 
-1. Create `missions/newmission.js` copying the format of `convstore.js`
-2. Add the background image to `images/`
-3. Register the mission in `js/game.js` (in `allMissions` object)
-4. Add a mission card in `index.html`
+See `CLAUDE.md` for the full architecture guide.
 
-## 🎮 Tech stack
+---
 
-- HTML5 / CSS3 / Vanilla JavaScript
-- Claude API (Anthropic) for the chatbot
-- Google Fonts (Inter, Noto Sans KR)
-- No build step, no dependencies — just open and run
+## Tech stack
+
+- HTML5 / CSS3 / Vanilla JavaScript — zero dependencies, zero build step
+- [Claude API](https://www.anthropic.com) — in-game AI assistant (`claude-haiku-4-5`)
+- Google Fonts — Inter, Noto Sans KR
+
+---
+
+## Team
+
+Kookmin University — 2026 Capstone Design Project  
+[github.com/kookmin-sw/2026-capstone-82](https://github.com/kookmin-sw/2026-capstone-82)

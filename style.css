@@ -218,6 +218,124 @@ h1 {
 }
 
 /* ===================================================================
+   MODE TOGGLE (단기 / 장기)
+   =================================================================== */
+
+.mode-toggle {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 10px;
+  animation: fadeIn 0.6s ease 0.25s backwards;
+}
+
+.mode-btn {
+  padding: 10px 28px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.2s ease;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.mode-btn.active {
+  background: var(--text);
+  color: var(--surface);
+}
+
+.mode-btn:hover:not(.active) {
+  color: var(--text);
+}
+
+.mode-btn:active {
+  transform: scale(0.97);
+}
+
+.mode-desc {
+  font-size: 13px;
+  color: var(--text-subtle);
+  margin-bottom: 28px;
+  font-weight: 400;
+  animation: fadeIn 0.6s ease 0.28s backwards;
+}
+
+/* ===================================================================
+   STEP BADGE
+   =================================================================== */
+
+.step-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.mission-card.cleared .step-badge {
+  color: var(--success);
+}
+
+/* ===================================================================
+   LOCKED MISSION CARD
+   =================================================================== */
+
+.mission-card.locked {
+  opacity: 0.42;
+  cursor: not-allowed;
+  filter: grayscale(0.25);
+}
+
+.mission-card.locked:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+/* ===================================================================
+   LOCKED TOAST NOTIFICATION
+   =================================================================== */
+
+#locked-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: rgba(29, 29, 31, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 300;
+  white-space: nowrap;
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#locked-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===================================================================
    GAME SCREEN
    =================================================================== */
 
@@ -316,23 +434,28 @@ button:active {
   transform: scale(0.99);
 }
 
-#choices button:last-child {
-  background: var(--text);
-  color: var(--surface);
-  border-color: var(--text);
-}
-
-#choices button:last-child:hover {
-  background: #000;
-}
 
 #hint {
-  font-size: 13px;
-  color: var(--text-subtle);
-  text-align: right;
+  font-size: 15px;
+  color: var(--text);
+  text-align: center;
   display: none;
-  margin-top: 12px;
-  font-weight: 400;
+  margin-top: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 14px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  letter-spacing: -0.01em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#hint:hover {
+  background: var(--bg);
+  border-color: var(--border-strong);
 }
 
 /* ===================================================================
@@ -610,6 +733,220 @@ button:active {
 #vocab-start-btn:hover {
   background: #000;
   transform: none;
+}
+
+/* ===================================================================
+   USER PROFILE MODAL
+   =================================================================== */
+
+#profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 500;
+  padding: 20px;
+  animation: overlayFade 0.3s ease;
+}
+
+#profile-overlay.active {
+  display: flex;
+}
+
+#profile-panel {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px 32px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.35);
+  animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.profile-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  margin-bottom: 8px;
+}
+
+.profile-heading {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.profile-subheading {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.form-label .form-required {
+  color: #FF3B30;
+  margin-left: 2px;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E6E73' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--accent);
+}
+
+.form-input.error,
+.form-select.error {
+  border-color: #FF3B30;
+}
+
+.form-radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.radio-option {
+  flex: 1;
+  min-width: 120px;
+}
+
+.radio-option input[type="radio"] {
+  display: none;
+}
+
+.radio-option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+  width: 100%;
+}
+
+.radio-option input[type="radio"]:checked + label {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--surface);
+}
+
+.form-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0 18px;
+}
+
+#arrival-group {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+
+#profile-submit {
+  width: 100%;
+  padding: 15px 24px;
+  background: var(--text);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: -0.01em;
+  transition: all 0.15s ease;
+  margin-top: 8px;
+}
+
+#profile-submit:hover {
+  background: #000;
+  transform: none;
+}
+
+.profile-error-msg {
+  font-size: 12px;
+  color: #FF3B30;
+  margin-top: 4px;
+  display: none;
+}
+
+/* Profile button on menu */
+#profile-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 9px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  width: auto;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+  display: none;
+}
+
+#profile-btn:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
 }
 
 /* ===================================================================
@@ -926,10 +1263,16 @@ button:active {
   }
 }
 
-/* Portrait phones: landscape images don't fill portrait screens well with cover.
-   Shift focus slightly left of center so characters near edges stay visible. */
+/* Portrait phones: keep the full-screen background; crop horizontally from center
+   so subjects in center-composed scenes stay visible. Cap dialogue height so
+   the background image is not fully obscured when many choices appear. */
 @media (max-width: 640px) and (orientation: portrait) {
   #background {
-    background-position: 35% top;
+    background-position: center center;
+  }
+
+  #dialogue {
+    max-height: 52vh;
+    overflow-y: auto;
   }
 }

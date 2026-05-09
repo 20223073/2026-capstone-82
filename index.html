@@ -14,6 +14,13 @@
   <h1>한국 생활 RPG</h1>
   <p class="subtitle">외국인을 위한 한국 문화 가이드 · A guide for newcomers</p>
 
+  <!-- Visit mode toggle -->
+  <div class="mode-toggle">
+    <button class="mode-btn" data-mode="short" onclick="setMode('short')">✈️ 단기 방문</button>
+    <button class="mode-btn" data-mode="long" onclick="setMode('long')">🏠 장기 거주</button>
+  </div>
+  <p id="mode-desc" class="mode-desc"></p>
+
   <div class="progress-bar-wrap">
     <div class="progress-label">
       <span id="progress-text">0 of 9 missions complete</span>
@@ -26,67 +33,88 @@
 
   <div class="missions">
 
-    <div class="mission-card" id="card-exchange" onclick="goMission('exchange')">
+    <div class="mission-card" id="card-exchange">
       <span class="mission-status" id="status-exchange">미완료</span>
       <span class="mission-icon">💱</span>
       <div class="mission-title">공항 환전</div>
       <div class="mission-desc">Exchange dollars to won at the airport</div>
     </div>
 
-    <div class="mission-card" id="card-lostfound" onclick="goMission('lostfound')">
+    <div class="mission-card" id="card-lostfound">
       <span class="mission-status" id="status-lostfound">미완료</span>
-      <span class="mission-icon">📱</span>
+      <span class="mission-icon">🔍</span>
       <div class="mission-title">공항 분실물 센터</div>
       <div class="mission-desc">Recover your lost phone at Lost & Found</div>
     </div>
 
-    <div class="mission-card" id="card-immigration" onclick="goMission('immigration')">
-      <span class="mission-status" id="status-immigration">미완료</span>
-      <span class="mission-icon">🏛️</span>
-      <div class="mission-title">출입국관리사무소</div>
-      <div class="mission-desc">Apply for your Alien Registration Card</div>
-    </div>
-
-    <div class="mission-card" id="card-convstore" onclick="goMission('convstore')">
+    <div class="mission-card" id="card-convstore">
       <span class="mission-status" id="status-convstore">미완료</span>
       <span class="mission-icon">🏪</span>
-      <div class="mission-title">편의점</div>
+      <div class="mission-title">편의점 — T머니 구매</div>
       <div class="mission-desc">Buy and charge a T-money transit card</div>
     </div>
 
-    <div class="mission-card" id="card-subway" onclick="goMission('subway')">
+    <div class="mission-card" id="card-subway">
       <span class="mission-status" id="status-subway">미완료</span>
       <span class="mission-icon">🚇</span>
       <div class="mission-title">지하철 타기</div>
       <div class="mission-desc">Ride the subway and learn Korean etiquette</div>
     </div>
 
-    <div class="mission-card" id="card-telecom" onclick="goMission('telecom')">
+    <div class="mission-card" id="card-telecom">
       <span class="mission-status" id="status-telecom">미완료</span>
       <span class="mission-icon">📱</span>
       <div class="mission-title">통신사 유심 개통</div>
       <div class="mission-desc">Activate a Korean USIM at a carrier shop</div>
     </div>
 
-    <div class="mission-card" id="card-bank" onclick="goMission('bank')">
+    <div class="mission-card" id="card-immigration">
+      <span class="mission-status" id="status-immigration">미완료</span>
+      <span class="mission-icon">🏛️</span>
+      <div class="mission-title">출입국관리사무소</div>
+      <div class="mission-desc">Apply for your Alien Registration Card</div>
+    </div>
+
+    <div class="mission-card" id="card-bank">
       <span class="mission-status" id="status-bank">미완료</span>
       <span class="mission-icon">🏦</span>
       <div class="mission-title">은행 통장 개설</div>
       <div class="mission-desc">Open a Korean bank account as a foreigner</div>
     </div>
 
-    <div class="mission-card" id="card-clothing" onclick="goMission('clothing')">
-      <span class="mission-status" id="status-clothing">미완료</span>
-      <span class="mission-icon">👗</span>
-      <div class="mission-title">옷 가게 환불/교환</div>
-      <div class="mission-desc">Return or exchange clothes + Tax Refund</div>
-    </div>
-
-    <div class="mission-card" id="card-realestate" onclick="goMission('realestate')">
+    <div class="mission-card" id="card-realestate">
       <span class="mission-status" id="status-realestate">미완료</span>
       <span class="mission-icon">🏠</span>
       <div class="mission-title">부동산 — 집 구하기</div>
       <div class="mission-desc">Find a rental and sign a lease</div>
+    </div>
+
+    <div class="mission-card" id="card-garbage">
+      <span class="mission-status" id="status-garbage">미완료</span>
+      <span class="mission-icon">🗑️</span>
+      <div class="mission-title">쓰레기 봉투 구매</div>
+      <div class="mission-desc">Buy the right bag — Korea's waste separation system</div>
+    </div>
+
+    <div class="mission-card" id="card-hospital">
+      <span class="mission-status" id="status-hospital">미완료</span>
+      <span class="mission-icon">🏥</span>
+      <div class="mission-title">병원 진료 받기</div>
+      <div class="mission-desc">Visit a hospital and get a prescription as a foreigner</div>
+    </div>
+
+    <div class="mission-card" id="card-pharmacy">
+      <span class="mission-status" id="status-pharmacy">미완료</span>
+      <span class="mission-icon">💊</span>
+      <div class="mission-title">약국에서 약 구매</div>
+      <div class="mission-desc">Pick up medicine with or without a prescription</div>
+    </div>
+
+    <div class="mission-card" id="card-clothing">
+      <span class="mission-status" id="status-clothing">미완료</span>
+      <span class="mission-icon">👗</span>
+      <div class="mission-title">옷 가게 환불/교환</div>
+      <div class="mission-desc">Return or exchange clothes + Tax Refund</div>
     </div>
 
   </div>
@@ -94,31 +122,327 @@
   <p class="footer">미션을 클리어하면 자동으로 이 화면으로 돌아옵니다</p>
 </div>
 
+<div id="locked-toast"></div>
+
+<!-- Profile edit button (visible after registration) -->
+<button id="profile-btn" onclick="openProfileModal(false)">👤 내 프로필</button>
+
+<!-- User profile registration modal -->
+<div id="profile-overlay">
+  <div id="profile-panel">
+    <div class="profile-eyebrow">KOREA LIFE RPG</div>
+    <h2 class="profile-heading">환영합니다! · Welcome!</h2>
+    <p class="profile-subheading">게임을 시작하기 전에 간단한 정보를 입력해주세요.<br>Before we begin, tell us a little about yourself.</p>
+
+    <form id="profile-form" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span></label>
+        <input class="form-input" type="email" id="f-email" placeholder="you@gmail.com" autocomplete="email">
+        <div class="profile-error-msg" id="err-email">유효한 이메일을 입력해주세요.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span></label>
+        <select class="form-select" id="f-nationality">
+          <option value="">선택해주세요 · Select…</option>
+          <option>China</option>
+          <option>Japan</option>
+          <option>Vietnam</option>
+          <option>Philippines</option>
+          <option>Indonesia</option>
+          <option>Thailand</option>
+          <option>Mongolia</option>
+          <option>Uzbekistan</option>
+          <option>Kazakhstan</option>
+          <option>Russia</option>
+          <option>United States</option>
+          <option>United Kingdom</option>
+          <option>France</option>
+          <option>Germany</option>
+          <option>India</option>
+          <option>Bangladesh</option>
+          <option>Nepal</option>
+          <option>Myanmar</option>
+          <option>Cambodia</option>
+          <option>Other</option>
+        </select>
+        <div class="profile-error-msg" id="err-nationality">국적을 선택해주세요.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-age">나이 · Age <span class="form-required">*</span></label>
+        <input class="form-input" type="number" id="f-age" placeholder="25" min="10" max="100" style="max-width:120px">
+        <div class="profile-error-msg" id="err-age">유효한 나이를 입력해주세요.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-location">현재 거주지 · Current Location <span class="form-required">*</span></label>
+        <input class="form-input" type="text" id="f-location" placeholder="e.g. Seoul, Korea  /  Tokyo, Japan">
+        <div class="profile-error-msg" id="err-location">거주지를 입력해주세요.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">현재 한국에 계신가요? · Currently in Korea?</label>
+        <div class="form-radio-group">
+          <div class="radio-option">
+            <input type="radio" name="in-korea" id="r-yes" value="yes">
+            <label for="r-yes">네 · Yes, I'm in Korea</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="in-korea" id="r-no" value="no" checked>
+            <label for="r-no">아니요 · Not yet</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" id="arrival-group">
+        <label class="form-label" for="f-arrival">한국 입국 예정일 · Planned Arrival to Korea</label>
+        <input class="form-input" type="date" id="f-arrival" style="max-width:200px">
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-group">
+        <label class="form-label">방문 목적 · Purpose <span class="form-required">*</span></label>
+        <div class="form-radio-group">
+          <div class="radio-option">
+            <input type="radio" name="purpose" id="p-work" value="work">
+            <label for="p-work">💼 취업 · Work</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="purpose" id="p-study" value="study">
+            <label for="p-study">📚 유학 · Study</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="purpose" id="p-travel" value="travel">
+            <label for="p-travel">✈️ 여행 · Travel</label>
+          </div>
+        </div>
+        <div class="profile-error-msg" id="err-purpose">목적을 선택해주세요.</div>
+      </div>
+
+      <button type="submit" id="profile-submit">저장하고 시작하기 · Save &amp; Start →</button>
+
+    </form>
+  </div>
+</div>
+
 <script>
-function loadStatus() {
-  const missions = ['exchange', 'lostfound', 'immigration', 'convstore', 'subway', 'telecom', 'bank', 'clothing', 'realestate'];
-  let done = 0;
+// ---- Mode system ----
+const MODE_KEY = 'visit_mode';
 
-  missions.forEach(m => {
-    if (localStorage.getItem('cleared_' + m) === 'true') {
-      document.getElementById('status-' + m).textContent = '클리어';
-      document.getElementById('status-' + m).classList.add('cleared');
-      document.getElementById('card-' + m).classList.add('cleared');
-      done++;
-    }
-  });
+const MODE_CONFIG = {
+  short: {
+    sublabel: '단기 여행자 코스 · 7 missions — Airport → Shopping',
+    missions: ['exchange', 'lostfound', 'convstore', 'subway', 'hospital', 'pharmacy', 'clothing']
+  },
+  long: {
+    sublabel: '장기 거주자 코스 · 12 missions — Airport → Home',
+    missions: ['exchange', 'lostfound', 'convstore', 'subway', 'telecom', 'immigration', 'bank', 'realestate', 'garbage', 'hospital', 'pharmacy', 'clothing']
+  }
+};
 
-  const percent = Math.round((done / missions.length) * 100);
-  document.getElementById('progress-text').textContent = `${done} of ${missions.length} missions complete`;
-  document.getElementById('progress-percent').textContent = `${percent}%`;
-  document.getElementById('progress-fill').style.width = percent + '%';
+const MISSION_NAMES = {
+  exchange: '공항 환전', lostfound: '분실물 센터', convstore: '편의점',
+  subway: '지하철', telecom: '통신사', immigration: '출입국사무소',
+  bank: '은행', realestate: '부동산', garbage: '쓰레기 봉투',
+  hospital: '병원', pharmacy: '약국', clothing: '옷 가게'
+};
+
+const ALL_MISSIONS = ['exchange', 'lostfound', 'convstore', 'subway', 'telecom', 'immigration', 'bank', 'realestate', 'garbage', 'hospital', 'pharmacy', 'clothing'];
+
+function getCurrentMode() {
+  return localStorage.getItem(MODE_KEY) || 'long';
+}
+
+function setMode(mode) {
+  localStorage.setItem(MODE_KEY, mode);
+  renderMissions();
 }
 
 function goMission(missionId) {
   window.location.href = `game.html?mission=${missionId}`;
 }
 
-loadStatus();
+function showLockedMsg(missionId, prevMission) {
+  const toast = document.getElementById('locked-toast');
+  toast.textContent = `먼저 "${MISSION_NAMES[prevMission]}"을(를) 완료하세요 · Complete the previous step first`;
+  toast.classList.add('visible');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('visible'), 2500);
+}
+
+function renderMissions() {
+  const mode = getCurrentMode();
+  const config = MODE_CONFIG[mode];
+
+  // Update mode button states and description
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  const modeDesc = document.getElementById('mode-desc');
+  if (modeDesc) modeDesc.textContent = config.sublabel;
+
+  // Reset all cards to hidden/neutral state
+  ALL_MISSIONS.forEach(m => {
+    const card   = document.getElementById('card-' + m);
+    const status = document.getElementById('status-' + m);
+    if (card)   { card.style.display = 'none'; card.classList.remove('locked', 'cleared'); card.onclick = null; }
+    if (status) { status.textContent = '미완료'; status.classList.remove('cleared'); }
+  });
+
+  // Show and configure cards for current mode, in step order
+  let stepNum = 1;
+  let done    = 0;
+
+  config.missions.forEach((m, idx) => {
+    const card   = document.getElementById('card-' + m);
+    const status = document.getElementById('status-' + m);
+    if (!card) return;
+
+    card.style.display = '';
+
+    const isCleared  = localStorage.getItem('cleared_' + m) === 'true';
+    const prevId     = idx > 0 ? config.missions[idx - 1] : null;
+    const prevDone   = !prevId || localStorage.getItem('cleared_' + prevId) === 'true';
+    const isLocked   = !isCleared && !prevDone;
+
+    if (isCleared) {
+      done++;
+      card.classList.add('cleared');
+      if (status) { status.textContent = '클리어'; status.classList.add('cleared'); }
+    } else if (isLocked) {
+      card.classList.add('locked');
+      if (status) status.textContent = '🔒';
+    }
+
+    card.onclick = isLocked ? () => showLockedMsg(m, prevId) : () => goMission(m);
+
+    // Step number badge
+    let badge = card.querySelector('.step-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'step-badge';
+      card.insertBefore(badge, card.firstChild);
+    }
+    badge.textContent = `STEP ${stepNum++}`;
+  });
+
+  // Progress bar (only current mode missions count)
+  const total   = config.missions.length;
+  const percent = Math.round((done / total) * 100);
+  document.getElementById('progress-text').textContent    = `${done} of ${total} missions complete`;
+  document.getElementById('progress-percent').textContent = `${percent}%`;
+  document.getElementById('progress-fill').style.width    = percent + '%';
+}
+
+// ---- User profile ----
+const PROFILE_KEY = 'user_profile';
+
+function getUserProfile() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY)); }
+  catch { return null; }
+}
+
+function saveUserProfile(data) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+}
+
+function openProfileModal(isFirstVisit) {
+  const overlay = document.getElementById('profile-overlay');
+  overlay.classList.add('active');
+
+  const profile = getUserProfile();
+  if (profile) {
+    document.getElementById('f-email').value      = profile.email      || '';
+    document.getElementById('f-nationality').value = profile.nationality || '';
+    document.getElementById('f-age').value         = profile.age         || '';
+    document.getElementById('f-location').value    = profile.location    || '';
+    document.getElementById('f-arrival').value     = profile.plannedArrival || '';
+
+    const inKoreaVal = profile.inKorea ? 'yes' : 'no';
+    const inKoreaRadio = document.querySelector(`input[name="in-korea"][value="${inKoreaVal}"]`);
+    if (inKoreaRadio) inKoreaRadio.checked = true;
+
+    if (profile.purpose) {
+      const purposeRadio = document.querySelector(`input[name="purpose"][value="${profile.purpose}"]`);
+      if (purposeRadio) purposeRadio.checked = true;
+    }
+
+    toggleArrivalField();
+    if (!isFirstVisit) {
+      document.getElementById('profile-submit').textContent = '저장하기 · Save';
+    }
+  }
+}
+
+function toggleArrivalField() {
+  const inKorea = document.querySelector('input[name="in-korea"]:checked')?.value === 'yes';
+  const group = document.getElementById('arrival-group');
+  group.style.maxHeight = inKorea ? '0' : '80px';
+  group.style.opacity   = inKorea ? '0' : '1';
+}
+
+function validateAndSave(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const email       = document.getElementById('f-email').value.trim();
+  const nationality = document.getElementById('f-nationality').value;
+  const age         = parseInt(document.getElementById('f-age').value, 10);
+  const location    = document.getElementById('f-location').value.trim();
+  const inKorea     = document.querySelector('input[name="in-korea"]:checked')?.value === 'yes';
+  const arrival     = document.getElementById('f-arrival').value;
+  const purpose     = document.querySelector('input[name="purpose"]:checked')?.value;
+
+  const setErr = (id, show) => {
+    document.getElementById(id).style.display = show ? 'block' : 'none';
+    document.getElementById(id.replace('err-', 'f-'))?.classList.toggle('error', show);
+  };
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  setErr('err-email',       !emailOk);       if (!emailOk) valid = false;
+  setErr('err-nationality', !nationality);   if (!nationality) valid = false;
+  setErr('err-age',         isNaN(age) || age < 10 || age > 100);
+  if (isNaN(age) || age < 10 || age > 100) valid = false;
+  setErr('err-location',    !location);      if (!location) valid = false;
+  setErr('err-purpose',     !purpose);       if (!purpose) valid = false;
+
+  if (!valid) return;
+
+  const data = {
+    email,
+    nationality,
+    age,
+    location,
+    inKorea,
+    plannedArrival: inKorea ? null : (arrival || null),
+    purpose,
+    registeredAt: getUserProfile()?.registeredAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  saveUserProfile(data);
+  document.getElementById('profile-overlay').classList.remove('active');
+  document.getElementById('profile-btn').style.display = 'block';
+}
+
+function initProfile() {
+  const profile = getUserProfile();
+  if (!profile) {
+    openProfileModal(true);
+  } else {
+    document.getElementById('profile-btn').style.display = 'block';
+  }
+
+  document.querySelectorAll('input[name="in-korea"]').forEach(r => r.addEventListener('change', toggleArrivalField));
+  document.getElementById('profile-form').addEventListener('submit', validateAndSave);
+  toggleArrivalField();
+}
+
+renderMissions();
+initProfile();
 </script>
 
 </body>

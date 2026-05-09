@@ -15,6 +15,9 @@ const allMissions = {
   telecom:     telecomMission,
   clothing:    clothingMission,
   realestate:  realestateMission,
+  hospital:    hospitalMission,
+  pharmacy:    pharmacyMission,
+  garbage:     garbageMission,
 };
 
 // Current state
@@ -34,6 +37,25 @@ const textEl          = document.getElementById('text');
 const choicesEl       = document.getElementById('choices');
 const hintEl          = document.getElementById('hint');
 const missionCompleteEl = document.getElementById('missionComplete');
+
+hintEl.addEventListener('click', () => {
+  if (isTyping) return;
+  if (missionDone) { window.location.href = 'index.html'; return; }
+  if (!waitingForEnter) return;
+  if (enterCallback) {
+    const cb = enterCallback;
+    enterCallback = null;
+    waitingForEnter = false;
+    clearChoices();
+    cb();
+  } else {
+    waitingForEnter = false;
+  }
+});
+
+missionCompleteEl.addEventListener('click', () => {
+  if (missionDone) window.location.href = 'index.html';
+});
 
 // ===================================================================
 // Shared helpers (used by both step-based and scene-based missions)
@@ -61,8 +83,59 @@ function addChoice(text, val) {
   choicesEl.appendChild(btn);
 }
 
+// Desktop-only position overrides (default CSS is 'top center').
+// Use when an image has too much empty space at the top on wide screens.
+const desktopPos = {
+  'images/LostAndFound.png':        'center center',  // lostfound 2nd — too much ceiling
+  'images/bank_informationdesk.png':'center center',  // bank 1st — subject centered vertically
+  'images/bank_counter.png':        'center center',  // bank 3rd — subject centered vertically
+};
+
+// Per-image crop anchors for portrait mobile.
+// On portrait phones, cover shows ~37% of a landscape image's width.
+// These values shift the visible strip left (small %) or right (large %)
+// so the scene's subject stays in frame instead of being cropped off.
+const mobileCropX = {
+  // exchange
+  'images/MoneyExchange.png':        '20%',  // exchange clerk — LEFT
+  // convstore / garbage
+  'images/ConvStoreInside.png':      '80%',  // store clerk — RIGHT
+  // subway
+  'images/subway_entrance.png':      '80%',  // entrance — RIGHT
+  'images/subway_card.png':          '80%',  // card machine — RIGHT
+  'images/subway_card_friend.png':   '80%',  // friend — RIGHT
+  'images/subway_platform.png':      '20%',  // platform — LEFT
+  'images/subway_inside_00.png':     '80%',  // train interior — RIGHT
+  'images/subway_inside_01.png':     '80%',  // train interior — RIGHT
+  'images/subway_arrive.png':        '80%',  // station arrival — RIGHT
+  // telecom
+  'images/telecom_shop.png':         '20%',  // store clerk — LEFT
+  'images/telecom_counter.png':      '80%',  // counter clerk — RIGHT
+  // immigration
+  'images/Information_desk.png':     '30%',  // info desk — slightly LEFT
+  'images/Immigration_RegDesk.png':  '30%',  // registration desk — slightly LEFT
+  // bank
+  'images/bank_informationdesk.png': '80%',  // info desk clerk — RIGHT
+  'images/bank_counter.png':         '20%',  // counter clerk — LEFT
+  // realestate
+  'images/real_estate.png':          '20%',  // exterior — LEFT
+  'images/real_estate_office.png':   '20%',  // office — LEFT
+  'images/room_visit_B.png':         '20%',  // room B — LEFT
+  // hospital
+  'images/hospital_lobby.png':       '20%',  // reception desk — LEFT
+  'images/hospital_doctor.png':      '80%',  // doctor — RIGHT
+  // clothing
+  'images/clothing_store.png':       '20%',  // store overview — LEFT
+  'images/clothing_counter.png':     '20%',  // counter — LEFT
+};
+
 function changeBackground(img) {
   bgEl.style.backgroundImage = `url('${img}')`;
+  if (window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches) {
+    bgEl.style.backgroundPosition = (mobileCropX[img] || '50%') + ' center';
+  } else {
+    bgEl.style.backgroundPosition = desktopPos[img] || '';
+  }
 }
 
 // Wait for Enter key, then run callback
@@ -164,7 +237,7 @@ function renderStep() {
   const step = currentMission.steps[currentStepKey];
   if (!step) { console.error('Step not found:', currentStepKey); return; }
 
-  if (step.background) bgEl.style.backgroundImage = `url('${step.background}')`;
+  if (step.background) changeBackground(step.background);
 
   typeText(step.text, () => {
     if (step.choices && step.choices.length > 0) {
@@ -294,7 +367,7 @@ function startMission(missionId) {
 
   currentStepKey = 'start';
   missionDone = false;
-  bgEl.style.backgroundImage = `url('${currentMission.background}')`;
+  changeBackground(currentMission.background);
 
   const hudTitle = document.getElementById('hud-title');
   if (hudTitle) hudTitle.textContent = currentMission.title;

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Dashboard — Korea Life RPG</title>
+<link rel="icon" href="favicon.png" type="image/png">
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 24px; min-height: 100vh; }
+header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+h1 { font-size: 26px; font-weight: 700; }
+.back-link { font-size: 14px; color: #007aff; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
+.subtitle { color: #888; font-size: 14px; margin-bottom: 28px; }
+.stats-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
+.stat-card { background: white; border-radius: 14px; padding: 18px 22px; flex: 1; min-width: 120px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.stat-card .num { font-size: 34px; font-weight: 700; color: #007aff; line-height: 1; }
+.stat-card .label { color: #888; font-size: 13px; margin-top: 5px; }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 28px; }
+.chart-card { background: white; border-radius: 14px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.chart-card h2 { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #444; }
+.queries-list { list-style: none; }
+.queries-list li { padding: 8px 0; border-bottom: 1px solid #f2f2f2; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.queries-list li:last-child { border-bottom: none; }
+.queries-list .q-text { flex: 1; word-break: break-word; }
+.queries-list .cnt { background: #eef2ff; color: #3351bb; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.diff-list { list-style: none; }
+.diff-list li { padding: 7px 0; border-bottom: 1px solid #f2f2f2; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.diff-list li:last-child { border-bottom: none; }
+.diff-list .step-name { flex: 1; color: #333; }
+.diff-list .mission-tag { font-size: 11px; color: #888; }
+.diff-list .dur { color: #ff9500; font-weight: 600; white-space: nowrap; }
+#loading { text-align: center; padding: 80px; color: #888; font-size: 17px; }
+#error-msg { display: none; text-align: center; padding: 40px; color: #ff3b30; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Analytics Dashboard</h1>
+  <a class="back-link" href="index.html">← Back to game</a>
+</header>
+<p class="subtitle">Korea Life RPG · Real-time user behavior from Firestore <span id="last-updated"></span></p>
+
+<div id="loading">Loading data from Firestore…</div>
+<div id="error-msg"></div>
+
+<div id="content" style="display:none">
+
+  <!-- Summary stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="num" id="s-sessions">—</div><div class="label">Sessions</div></div>
+    <div class="stat-card"><div class="num" id="s-users">—</div><div class="label">Unique Users</div></div>
+    <div class="stat-card"><div class="num" id="s-starts">—</div><div class="label">Mission Starts</div></div>
+    <div class="stat-card"><div class="num" id="s-completes">—</div><div class="label">Completions</div></div>
+    <div class="stat-card"><div class="num" id="s-abandon">—</div><div class="label">Abandons</div></div>
+    <div class="stat-card"><div class="num" id="s-chatbot">—</div><div class="label">Chatbot Queries</div></div>
+    <div class="stat-card"><div class="num" id="s-vocab">—</div><div class="label">Vocab Taps</div></div>
+    <div class="stat-card"><div class="num" id="s-skip">—</div><div class="label">Typewriter Skips</div></div>
+  </div>
+
+  <div class="charts">
+
+    <div class="chart-card">
+      <h2>Mission Starts vs Completions vs Abandons</h2>
+      <canvas id="ch-missions"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Mission Abandon Rate (%)</h2>
+      <canvas id="ch-abandon"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>User Nationalities</h2>
+      <canvas id="ch-nationalities"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>New vs Returning Users · Mobile vs Desktop</h2>
+      <canvas id="ch-user-type"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Most Tapped Vocabulary Words (Top 12)</h2>
+      <canvas id="ch-vocab"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Most Revealed Vocab Cards (pre-mission)</h2>
+      <canvas id="ch-vocab-cards"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Average Mission Duration (minutes)</h2>
+      <canvas id="ch-duration"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Daily Events — Last 14 Days</h2>
+      <canvas id="ch-daily"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Top Chatbot Questions</h2>
+      <ul class="queries-list" id="queries-list"><li style="color:#bbb">No data yet</li></ul>
+    </div>
+
+    <div class="chart-card">
+      <h2>Hardest Steps (longest decision time)</h2>
+      <ul class="diff-list" id="diff-list"><li style="color:#bbb">No data yet</li></ul>
+    </div>
+
+    <div class="chart-card">
+      <h2>Most Common Choices</h2>
+      <canvas id="ch-choices"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/config.public.js"></script>
+<script src="js/config.js" onerror="void 0"></script>
+<script>
+const MISSION_LABELS = {
+  exchange:    '공항 환전',    lostfound:   '분실물 센터',
+  convstore:   '편의점',       subway:      '지하철',
+  telecom:     '통신사',       immigration: '출입국사무소',
+  bank:        '은행',         realestate:  '부동산',
+  garbage:     '쓰레기 봉투',  hospital:    '병원',
+  pharmacy:    '약국',         clothing:    '옷 가게',
+};
+const MISSION_ORDER = ['exchange','lostfound','convstore','subway','telecom','immigration',
+                       'bank','realestate','garbage','hospital','pharmacy','clothing'];
+const COLORS = ['#007aff','#34c759','#ff9500','#ff3b30','#5856d6',
+                '#ff2d55','#af52de','#5ac8fa','#ffcc00','#ff6b35','#30b0c7','#a2845e'];
+
+async function loadData() {
+  if (typeof CONFIG === 'undefined' || !CONFIG.FIREBASE) {
+    showError('Firebase not configured. Add CONFIG.FIREBASE to js/config.js.');
+    return;
+  }
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(CONFIG.FIREBASE);
+    const db   = firebase.firestore();
+    const snap = await db.collection('events').orderBy('timestamp', 'desc').limit(5000).get();
+    const events = snap.docs.map(d => d.data());
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = '';
+    document.getElementById('last-updated').textContent =
+      '· Last updated ' + new Date().toLocaleTimeString();
+
+    renderDashboard(events);
+  } catch (e) {
+    showError('Firestore error: ' + e.message +
+      '. Make sure Firestore security rules allow reads (test mode).');
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  const el = document.getElementById('error-msg');
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+function renderDashboard(events) {
+  // ── Summary ──────────────────────────────────────────────
+  const sessions  = new Set(events.map(e => e.sessionId).filter(Boolean)).size;
+  const users     = new Set(events.map(e => e.email).filter(Boolean)).size;
+  const starts    = events.filter(e => e.eventType === 'mission_start').length;
+  const completes = events.filter(e => e.eventType === 'mission_complete').length;
+  const abandons  = events.filter(e => e.eventType === 'mission_abandon').length;
+  const chatbot   = events.filter(e => e.eventType === 'chatbot_query').length;
+  const vocab     = events.filter(e => e.eventType === 'vocab_tap').length;
+  const skips     = events.filter(e => e.eventType === 'typewriter_skip').length;
+
+  document.getElementById('s-sessions').textContent  = sessions;
+  document.getElementById('s-users').textContent     = users;
+  document.getElementById('s-starts').textContent    = starts;
+  document.getElementById('s-completes').textContent = completes;
+  document.getElementById('s-abandon').textContent   = abandons;
+  document.getElementById('s-chatbot').textContent   = chatbot;
+  document.getElementById('s-vocab').textContent     = vocab;
+  document.getElementById('s-skip').textContent      = skips;
+
+  // ── Mission starts vs completes vs abandons ───────────────
+  const mStarts = {}, mCompletes = {}, mAbandons = {};
+  MISSION_ORDER.forEach(m => { mStarts[m] = 0; mCompletes[m] = 0; mAbandons[m] = 0; });
+  events.forEach(e => {
+    if (e.eventType === 'mission_start'   && e.missionId) mStarts[e.missionId]   = (mStarts[e.missionId]   || 0) + 1;
+    if (e.eventType === 'mission_complete'&& e.missionId) mCompletes[e.missionId]= (mCompletes[e.missionId]|| 0) + 1;
+    if (e.eventType === 'mission_abandon' && e.missionId) mAbandons[e.missionId] = (mAbandons[e.missionId] || 0) + 1;
+  });
+  new Chart(document.getElementById('ch-missions'), {
+    type: 'bar',
+    data: {
+      labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
+      datasets: [
+        { label: 'Started',   data: MISSION_ORDER.map(m => mStarts[m]),    backgroundColor: 'rgba(0,122,255,0.75)' },
+        { label: 'Completed', data: MISSION_ORDER.map(m => mCompletes[m]), backgroundColor: 'rgba(52,199,89,0.75)'  },
+        { label: 'Abandoned', data: MISSION_ORDER.map(m => mAbandons[m]), backgroundColor: 'rgba(255,59,48,0.75)'   },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } },
+               scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+
+  // ── Abandon rate per mission ──────────────────────────────
+  const abandonRates = MISSION_ORDER.map(m => {
+    const s = mStarts[m];
+    return s > 0 ? Math.round((mAbandons[m] / s) * 100) : 0;
+  });
+  new Chart(document.getElementById('ch-abandon'), {
+    type: 'bar',
+    data: {
+      labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
+      datasets: [{ label: 'Abandon %', data: abandonRates, backgroundColor: abandonRates.map(r => r > 50 ? 'rgba(255,59,48,0.8)' : r > 25 ? 'rgba(255,149,0,0.8)' : 'rgba(52,199,89,0.7)') }],
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+               scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } } },
+  });
+
+  // ── Nationalities ─────────────────────────────────────────
+  const natCounts = {};
+  events.filter(e => e.nationality).forEach(e => {
+    natCounts[e.nationality] = (natCounts[e.nationality] || 0) + 1;
+  });
+  const natTop = Object.entries(natCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+  new Chart(document.getElementById('ch-nationalities'), {
+    type: 'doughnut',
+    data: {
+      labels: natTop.map(([k]) => k),
+      datasets: [{ data: natTop.map(([,v]) => v), backgroundColor: COLORS }],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'right' } } },
+  });
+
+  // ── New vs Returning · Mobile vs Desktop ──────────────────
+  const newUsers      = events.filter(e => e.eventType === 'user_registered').length;
+  const returningUsers= events.filter(e => e.eventType === 'user_logged_in').length;
+  const sessionEvents = events.filter(e => e.eventType === 'session_start');
+  const mobileCount   = sessionEvents.filter(e => e.isMobile === true).length;
+  const desktopCount  = sessionEvents.filter(e => e.isMobile === false).length;
+  new Chart(document.getElementById('ch-user-type'), {
+    type: 'doughnut',
+    data: {
+      labels: ['New Users', 'Returning Users', 'Mobile Sessions', 'Desktop Sessions'],
+      datasets: [
+        { label: 'User Type',  data: [newUsers, returningUsers, 0, 0],       backgroundColor: ['#007aff','#34c759','transparent','transparent'] },
+        { label: 'Device',     data: [0, 0, mobileCount, desktopCount],      backgroundColor: ['transparent','transparent','#5856d6','#ff9500'] },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'right' } } },
+  });
+
+  // ── Vocab taps (in-mission tooltips) ─────────────────────
+  const wordCounts = {};
+  events.filter(e => e.eventType === 'vocab_tap' && e.word).forEach(e => {
+    wordCounts[e.word] = (wordCounts[e.word] || 0) + 1;
+  });
+  const topWords = Object.entries(wordCounts).sort((a,b) => b[1]-a[1]).slice(0, 12);
+  new Chart(document.getElementById('ch-vocab'), {
+    type: 'bar',
+    data: {
+      labels: topWords.map(([w]) => w),
+      datasets: [{ label: 'Taps', data: topWords.map(([,c]) => c), backgroundColor: 'rgba(88,86,214,0.75)' }],
+    },
+    options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+               scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+
+  // ── Vocab card reveals (pre-mission screen) ───────────────
+  const cardCounts = {};
+  events.filter(e => e.eventType === 'vocab_card_reveal' && e.word).forEach(e => {
+    cardCounts[e.word] = (cardCounts[e.word] || 0) + 1;
+  });
+  const topCards = Object.entries(cardCounts).sort((a,b) => b[1]-a[1]).slice(0, 12);
+  new Chart(document.getElementById('ch-vocab-cards'), {
+    type: 'bar',
+    data: {
+      labels: topCards.map(([w]) => w),
+      datasets: [{ label: 'Reveals', data: topCards.map(([,c]) => c), backgroundColor: 'rgba(175,82,222,0.75)' }],
+    },
+    options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+               scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+
+  // ── Average duration ──────────────────────────────────────
+  const durBuckets = {};
+  events.filter(e => e.eventType === 'mission_complete' && e.durationMs && e.missionId).forEach(e => {
+    (durBuckets[e.missionId] = durBuckets[e.missionId] || []).push(e.durationMs);
+  });
+  const avgDurs = MISSION_ORDER.map(m => {
+    const arr = durBuckets[m];
+    return arr ? Math.round(arr.reduce((a,b) => a+b,0) / arr.length / 6000) / 10 : 0;
+  });
+  new Chart(document.getElementById('ch-duration'), {
+    type: 'bar',
+    data: {
+      labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
+      datasets: [{ label: 'Avg min', data: avgDurs, backgroundColor: 'rgba(255,149,0,0.75)' }],
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+               scales: { y: { beginAtZero: true } } },
+  });
+
+  // ── Daily events ──────────────────────────────────────────
+  const days = [];
+  const now  = new Date();
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  const dayCounts = {};
+  days.forEach(d => dayCounts[d] = 0);
+  events.forEach(e => {
+    const day = (e.timestamp || '').slice(0, 10);
+    if (day in dayCounts) dayCounts[day]++;
+  });
+  new Chart(document.getElementById('ch-daily'), {
+    type: 'line',
+    data: {
+      labels: days.map(d => d.slice(5)),
+      datasets: [{
+        label: 'Events', data: days.map(d => dayCounts[d]),
+        borderColor: '#007aff', backgroundColor: 'rgba(0,122,255,0.1)',
+        fill: true, tension: 0.35, pointRadius: 4,
+      }],
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+               scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+
+  // ── Top chatbot questions ─────────────────────────────────
+  const qCounts = {};
+  events.filter(e => e.eventType === 'chatbot_query' && e.question).forEach(e => {
+    const q = e.question.trim();
+    qCounts[q] = (qCounts[q] || 0) + 1;
+  });
+  const topQ = Object.entries(qCounts).sort((a,b) => b[1]-a[1]).slice(0, 15);
+  const qList = document.getElementById('queries-list');
+  qList.innerHTML = '';
+  if (!topQ.length) {
+    qList.innerHTML = '<li style="color:#bbb">No chatbot queries yet</li>';
+  } else {
+    topQ.forEach(([q, cnt]) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="q-text">${escHtml(q)}</span><span class="cnt">${cnt}×</span>`;
+      qList.appendChild(li);
+    });
+  }
+
+  // ── Hardest steps (longest durationMs) ───────────────────
+  const stepTimes = {};
+  events.filter(e => e.eventType === 'choice_made' && e.durationMs && e.stepKey && e.missionId).forEach(e => {
+    const key = e.missionId + '::' + e.stepKey;
+    (stepTimes[key] = stepTimes[key] || []).push(e.durationMs);
+  });
+  const hardSteps = Object.entries(stepTimes)
+    .map(([key, arr]) => ({ key, avg: arr.reduce((a,b) => a+b,0) / arr.length }))
+    .sort((a,b) => b.avg - a.avg)
+    .slice(0, 12);
+  const dList = document.getElementById('diff-list');
+  dList.innerHTML = '';
+  if (!hardSteps.length) {
+    dList.innerHTML = '<li style="color:#bbb">No step data yet</li>';
+  } else {
+    hardSteps.forEach(({ key, avg }) => {
+      const [mId, stepKey] = key.split('::');
+      const li = document.createElement('li');
+      li.innerHTML =
+        `<span class="step-name">${escHtml(stepKey)} <span class="mission-tag">[${MISSION_LABELS[mId] || mId}]</span></span>` +
+        `<span class="dur">${(avg/1000).toFixed(1)}s</span>`;
+      dList.appendChild(li);
+    });
+  }
+
+  // ── Most common choices ───────────────────────────────────
+  const choiceCounts = {};
+  events.filter(e => e.eventType === 'choice_made' && e.choiceLabel).forEach(e => {
+    choiceCounts[e.choiceLabel] = (choiceCounts[e.choiceLabel] || 0) + 1;
+  });
+  const topChoices = Object.entries(choiceCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+  new Chart(document.getElementById('ch-choices'), {
+    type: 'bar',
+    data: {
+      labels: topChoices.map(([l]) => l.length > 28 ? l.slice(0,28)+'…' : l),
+      datasets: [{ label: 'Times chosen', data: topChoices.map(([,c]) => c), backgroundColor: 'rgba(255,45,85,0.7)' }],
+    },
+    options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+               scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+loadData();
+</script>
+</body>
+</html>

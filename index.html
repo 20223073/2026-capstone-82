@@ -6,6 +6,8 @@
 <title>안녕 from Korea</title>
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -16,8 +18,8 @@
 
   <!-- Visit mode toggle -->
   <div class="mode-toggle">
-    <button class="mode-btn" data-mode="short" onclick="setMode('short')">✈️ 단기 방문</button>
-    <button class="mode-btn" data-mode="long" onclick="setMode('long')">🏠 장기 거주</button>
+    <button class="mode-btn" data-mode="short" onclick="setMode('short')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> 단기 방문</button>
+    <button class="mode-btn" data-mode="long" onclick="setMode('long')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> 장기 거주</button>
   </div>
   <p id="mode-desc" class="mode-desc"></p>
 
@@ -124,109 +126,133 @@
 
 
 <!-- Profile edit button (visible after registration) -->
-<button id="profile-btn" onclick="openProfileModal(false)">👤 내 프로필</button>
+<button id="profile-btn" onclick="openProfileModal(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
 
-<!-- User profile registration modal -->
+<!-- User profile modal: two views — login (email-only) and register (full form) -->
 <div id="profile-overlay">
   <div id="profile-panel">
     <div class="profile-eyebrow">KOREA LIFE RPG</div>
-    <h2 class="profile-heading">환영합니다! · Welcome!</h2>
-    <p class="profile-subheading">게임을 시작하기 전에 간단한 정보를 입력해주세요.<br>Before we begin, tell us a little about yourself.</p>
 
-    <form id="profile-form" novalidate>
-
+    <!-- LOGIN VIEW: shown first when no local profile saved -->
+    <div id="login-view">
+      <h2 class="profile-heading">다시 오셨군요! · Welcome back!</h2>
+      <p class="profile-subheading">이메일을 입력하면 프로필이 불러와집니다.<br>Enter your email to restore your profile.</p>
       <div class="form-group">
-        <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span></label>
-        <input class="form-input" type="email" id="f-email" placeholder="you@gmail.com" autocomplete="email">
-        <div class="profile-error-msg" id="err-email">유효한 이메일을 입력해주세요.</div>
+        <label class="form-label" for="login-email">이메일 · Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="you@gmail.com" autocomplete="email">
+        <div class="profile-error-msg" id="err-login-email">유효한 이메일을 입력해주세요.</div>
+        <div class="profile-error-msg" id="err-not-found" style="color:#E8192C">이메일을 찾을 수 없습니다 · Email not found. Please register below.</div>
       </div>
+      <button id="login-submit" type="button">계속하기 · Continue →</button>
+      <button id="login-new-btn" class="link-btn" type="button">처음 방문이에요 · New here? Register →</button>
+    </div>
 
-      <div class="form-group">
-        <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span></label>
-        <select class="form-select" id="f-nationality">
-          <option value="">선택해주세요 · Select…</option>
-          <option>China</option>
-          <option>Japan</option>
-          <option>Vietnam</option>
-          <option>Philippines</option>
-          <option>Indonesia</option>
-          <option>Thailand</option>
-          <option>Mongolia</option>
-          <option>Uzbekistan</option>
-          <option>Kazakhstan</option>
-          <option>Russia</option>
-          <option>United States</option>
-          <option>United Kingdom</option>
-          <option>France</option>
-          <option>Germany</option>
-          <option>India</option>
-          <option>Bangladesh</option>
-          <option>Nepal</option>
-          <option>Myanmar</option>
-          <option>Cambodia</option>
-          <option>Other</option>
-        </select>
-        <div class="profile-error-msg" id="err-nationality">국적을 선택해주세요.</div>
-      </div>
+    <!-- REGISTER VIEW: full form for new users -->
+    <div id="register-view" style="display:none">
+      <h2 class="profile-heading">환영합니다! · Welcome!</h2>
+      <p class="profile-subheading">게임을 시작하기 전에 간단한 정보를 입력해주세요.<br>Before we begin, tell us a little about yourself.</p>
 
-      <div class="form-group">
-        <label class="form-label" for="f-age">나이 · Age <span class="form-required">*</span></label>
-        <input class="form-input" type="number" id="f-age" placeholder="25" min="10" max="100" style="max-width:120px">
-        <div class="profile-error-msg" id="err-age">유효한 나이를 입력해주세요.</div>
-      </div>
+      <form id="profile-form" novalidate>
 
-      <div class="form-group">
-        <label class="form-label" for="f-location">현재 거주지 · Current Location <span class="form-required">*</span></label>
-        <input class="form-input" type="text" id="f-location" placeholder="e.g. Seoul, Korea  /  Tokyo, Japan">
-        <div class="profile-error-msg" id="err-location">거주지를 입력해주세요.</div>
-      </div>
+        <div class="form-group">
+          <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span></label>
+          <input class="form-input" type="email" id="f-email" placeholder="you@gmail.com" autocomplete="email">
+          <div class="profile-error-msg" id="err-email">유효한 이메일을 입력해주세요.</div>
+        </div>
 
-      <div class="form-group">
-        <label class="form-label">현재 한국에 계신가요? · Currently in Korea?</label>
-        <div class="form-radio-group">
-          <div class="radio-option">
-            <input type="radio" name="in-korea" id="r-yes" value="yes">
-            <label for="r-yes">네 · Yes, I'm in Korea</label>
-          </div>
-          <div class="radio-option">
-            <input type="radio" name="in-korea" id="r-no" value="no" checked>
-            <label for="r-no">아니요 · Not yet</label>
+        <div class="form-group">
+          <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span></label>
+          <select class="form-select" id="f-nationality">
+            <option value="">선택해주세요 · Select…</option>
+            <option>China</option>
+            <option>Japan</option>
+            <option>Vietnam</option>
+            <option>Philippines</option>
+            <option>Indonesia</option>
+            <option>Thailand</option>
+            <option>Mongolia</option>
+            <option>Uzbekistan</option>
+            <option>Kazakhstan</option>
+            <option>Russia</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>France</option>
+            <option>Germany</option>
+            <option>India</option>
+            <option>Bangladesh</option>
+            <option>Nepal</option>
+            <option>Myanmar</option>
+            <option>Cambodia</option>
+            <option>Other</option>
+          </select>
+          <div class="profile-error-msg" id="err-nationality">국적을 선택해주세요.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-age">나이 · Age <span class="form-required">*</span></label>
+          <input class="form-input" type="number" id="f-age" placeholder="25" min="10" max="100" style="max-width:120px">
+          <div class="profile-error-msg" id="err-age">유효한 나이를 입력해주세요.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-location">현재 거주지 · Current Location <span class="form-required">*</span></label>
+          <input class="form-input" type="text" id="f-location" placeholder="e.g. Seoul, Korea  /  Tokyo, Japan">
+          <div class="profile-error-msg" id="err-location">거주지를 입력해주세요.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">현재 한국에 계신가요? · Currently in Korea?</label>
+          <div class="form-radio-group">
+            <div class="radio-option">
+              <input type="radio" name="in-korea" id="r-yes" value="yes">
+              <label for="r-yes">네 · Yes, I'm in Korea</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="in-korea" id="r-no" value="no" checked>
+              <label for="r-no">아니요 · Not yet</label>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="form-group" id="arrival-group">
-        <label class="form-label" for="f-arrival">한국 입국 예정일 · Planned Arrival to Korea</label>
-        <input class="form-input" type="date" id="f-arrival" style="max-width:200px">
-      </div>
-
-      <div class="form-divider"></div>
-
-      <div class="form-group">
-        <label class="form-label">방문 목적 · Purpose <span class="form-required">*</span></label>
-        <div class="form-radio-group">
-          <div class="radio-option">
-            <input type="radio" name="purpose" id="p-work" value="work">
-            <label for="p-work">💼 취업 · Work</label>
-          </div>
-          <div class="radio-option">
-            <input type="radio" name="purpose" id="p-study" value="study">
-            <label for="p-study">📚 유학 · Study</label>
-          </div>
-          <div class="radio-option">
-            <input type="radio" name="purpose" id="p-travel" value="travel">
-            <label for="p-travel">✈️ 여행 · Travel</label>
-          </div>
+        <div class="form-group" id="arrival-group">
+          <label class="form-label" for="f-arrival">한국 입국 예정일 · Planned Arrival to Korea</label>
+          <input class="form-input" type="date" id="f-arrival" style="max-width:200px">
         </div>
-        <div class="profile-error-msg" id="err-purpose">목적을 선택해주세요.</div>
-      </div>
 
-      <button type="submit" id="profile-submit">저장하고 시작하기 · Save &amp; Start →</button>
+        <div class="form-divider"></div>
 
-    </form>
+        <div class="form-group">
+          <label class="form-label">방문 목적 · Purpose <span class="form-required">*</span></label>
+          <div class="form-radio-group">
+            <div class="radio-option">
+              <input type="radio" name="purpose" id="p-work" value="work">
+              <label for="p-work">💼 취업 · Work</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="purpose" id="p-study" value="study">
+              <label for="p-study">📚 유학 · Study</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="purpose" id="p-travel" value="travel">
+              <label for="p-travel">✈️ 여행 · Travel</label>
+            </div>
+          </div>
+          <div class="profile-error-msg" id="err-purpose">목적을 선택해주세요.</div>
+        </div>
+
+        <button type="submit" id="profile-submit">저장하고 시작하기 · Save &amp; Start →</button>
+        <button id="register-back-btn" class="link-btn" type="button">← 로그인으로 돌아가기 · Back to login</button>
+
+      </form>
+    </div>
+
   </div>
 </div>
 
+<script src="js/config.public.js"></script>
+<script src="js/config.js" onerror="void 0"></script>
+<script src="js/db.js"></script>
+<script src="js/analytics.js"></script>
 <script>
 // ---- Mode system ----
 const MODE_KEY = 'visit_mode';
@@ -256,6 +282,7 @@ function getCurrentMode() {
 }
 
 function setMode(mode) {
+  if (window.Analytics) Analytics.modeChange(mode);
   localStorage.setItem(MODE_KEY, mode);
   renderMissions();
 }
@@ -333,33 +360,81 @@ function getUserProfile() {
 
 function saveUserProfile(data) {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+  // Also index by email so same-browser login works even without Firebase
+  if (data.email) localStorage.setItem('profile_' + data.email, JSON.stringify(data));
+}
+
+function showLoginView() {
+  document.getElementById('login-view').style.display = '';
+  document.getElementById('register-view').style.display = 'none';
+  document.getElementById('err-login-email').style.display = 'none';
+  document.getElementById('err-not-found').style.display = 'none';
+}
+
+function showRegisterView(prefilledEmail) {
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('register-view').style.display = '';
+  if (prefilledEmail) document.getElementById('f-email').value = prefilledEmail;
 }
 
 function openProfileModal(isFirstVisit) {
-  const overlay = document.getElementById('profile-overlay');
-  overlay.classList.add('active');
+  document.getElementById('profile-overlay').classList.add('active');
 
   const profile = getUserProfile();
-  if (profile) {
-    document.getElementById('f-email').value      = profile.email      || '';
-    document.getElementById('f-nationality').value = profile.nationality || '';
-    document.getElementById('f-age').value         = profile.age         || '';
-    document.getElementById('f-location').value    = profile.location    || '';
+  if (!isFirstVisit && profile) {
+    // Editing existing profile — jump straight to register view pre-filled
+    showRegisterView();
+    document.getElementById('f-email').value       = profile.email       || '';
+    document.getElementById('f-nationality').value = profile.nationality  || '';
+    document.getElementById('f-age').value         = profile.age          || '';
+    document.getElementById('f-location').value    = profile.location     || '';
     document.getElementById('f-arrival').value     = profile.plannedArrival || '';
-
-    const inKoreaVal = profile.inKorea ? 'yes' : 'no';
-    const inKoreaRadio = document.querySelector(`input[name="in-korea"][value="${inKoreaVal}"]`);
-    if (inKoreaRadio) inKoreaRadio.checked = true;
-
+    const kr = document.querySelector(`input[name="in-korea"][value="${profile.inKorea ? 'yes' : 'no'}"]`);
+    if (kr) kr.checked = true;
     if (profile.purpose) {
-      const purposeRadio = document.querySelector(`input[name="purpose"][value="${profile.purpose}"]`);
-      if (purposeRadio) purposeRadio.checked = true;
+      const pr = document.querySelector(`input[name="purpose"][value="${profile.purpose}"]`);
+      if (pr) pr.checked = true;
     }
-
+    document.getElementById('profile-submit').textContent = '저장하기 · Save';
     toggleArrivalField();
-    if (!isFirstVisit) {
-      document.getElementById('profile-submit').textContent = '저장하기 · Save';
+  } else {
+    // First visit or no local profile — show login view
+    showLoginView();
+  }
+}
+
+async function handleEmailLookup() {
+  const email = document.getElementById('login-email').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  document.getElementById('err-login-email').style.display = emailOk ? 'none' : 'block';
+  document.getElementById('err-not-found').style.display = 'none';
+  if (!emailOk) return;
+
+  const btn = document.getElementById('login-submit');
+  btn.textContent = '불러오는 중… · Loading…';
+  btn.disabled = true;
+
+  // Try Firebase first, fall back to localStorage email index
+  let profile = await DB.getProfile(email);
+  if (!profile) {
+    try { profile = JSON.parse(localStorage.getItem('profile_' + email)); } catch {}
+  }
+
+  btn.textContent = '계속하기 · Continue →';
+  btn.disabled = false;
+
+  if (profile) {
+    if (Array.isArray(profile.clearedMissions)) {
+      profile.clearedMissions.forEach(id => localStorage.setItem('cleared_' + id, 'true'));
     }
+    saveUserProfile(profile);
+    if (window.Analytics) Analytics.userLoggedIn();
+    renderMissions();
+    document.getElementById('profile-overlay').classList.remove('active');
+    document.getElementById('profile-btn').style.display = 'flex';
+  } else {
+    document.getElementById('err-not-found').style.display = 'block';
+    setTimeout(() => showRegisterView(email), 1200);
   }
 }
 
@@ -388,47 +463,72 @@ function validateAndSave(e) {
   };
 
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  setErr('err-email',       !emailOk);       if (!emailOk) valid = false;
-  setErr('err-nationality', !nationality);   if (!nationality) valid = false;
+  setErr('err-email',       !emailOk);         if (!emailOk) valid = false;
+  setErr('err-nationality', !nationality);     if (!nationality) valid = false;
   setErr('err-age',         isNaN(age) || age < 10 || age > 100);
-  if (isNaN(age) || age < 10 || age > 100) valid = false;
-  setErr('err-location',    !location);      if (!location) valid = false;
-  setErr('err-purpose',     !purpose);       if (!purpose) valid = false;
+  if (isNaN(age) || age < 10 || age > 100)     valid = false;
+  setErr('err-location',    !location);        if (!location) valid = false;
+  setErr('err-purpose',     !purpose);         if (!purpose) valid = false;
 
   if (!valid) return;
 
   const data = {
-    email,
-    nationality,
-    age,
-    location,
-    inKorea,
+    email, nationality, age, location, inKorea,
     plannedArrival: inKorea ? null : (arrival || null),
     purpose,
+    clearedMissions: getLocalClearedMissions(),
     registeredAt: getUserProfile()?.registeredAt || new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
   saveUserProfile(data);
+  DB.saveProfile(data);
+  if (window.Analytics) Analytics.userRegistered();
   document.getElementById('profile-overlay').classList.remove('active');
-  document.getElementById('profile-btn').style.display = 'block';
+  document.getElementById('profile-btn').style.display = 'flex';
+}
+
+// Collect all cleared mission IDs from localStorage
+function getLocalClearedMissions() {
+  const ALL = ['exchange','lostfound','convstore','subway','telecom','immigration',
+               'bank','realestate','garbage','hospital','pharmacy','clothing'];
+  return ALL.filter(id => localStorage.getItem('cleared_' + id) === 'true');
+}
+
+// Push current cleared progress to Firebase (called on page load)
+async function syncProgressToFirebase() {
+  const profile = getUserProfile();
+  if (!profile) return;
+  const cleared = getLocalClearedMissions();
+  const stored  = profile.clearedMissions || [];
+  // Only write if progress changed
+  if (JSON.stringify(cleared.sort()) === JSON.stringify([...stored].sort())) return;
+  const updated = { ...profile, clearedMissions: cleared, updatedAt: new Date().toISOString() };
+  saveUserProfile(updated);
+  DB.saveProfile(updated);
 }
 
 function initProfile() {
   const profile = getUserProfile();
-  if (!profile) {
-    openProfileModal(true);
+  if (profile) {
+    document.getElementById('profile-btn').style.display = 'flex';
   } else {
-    document.getElementById('profile-btn').style.display = 'block';
+    openProfileModal(true);
   }
 
   document.querySelectorAll('input[name="in-korea"]').forEach(r => r.addEventListener('change', toggleArrivalField));
   document.getElementById('profile-form').addEventListener('submit', validateAndSave);
+  document.getElementById('login-submit').addEventListener('click', handleEmailLookup);
+  document.getElementById('login-new-btn').addEventListener('click', () => showRegisterView(''));
+  document.getElementById('register-back-btn').addEventListener('click', showLoginView);
+  document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') handleEmailLookup(); });
   toggleArrivalField();
 }
 
 renderMissions();
 initProfile();
+syncProgressToFirebase();
+Analytics.sessionStart();
 </script>
 
 </body>

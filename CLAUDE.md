@@ -6,7 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 No build step required. Open `index.html` directly in a browser (`open index.html`). The `Hospital_Pharmacy_Garbage/` folder contains legacy standalone HTML prototypes — they are not part of the running game.
 
-For the AI chatbot to work, copy `js/config.example.js` → `js/config.js` and paste a Claude API key. `config.js` is gitignored and must never be committed.
+Copy `js/config.example.js` → `js/config.js` and fill in both keys:
+- `CLAUDE_API_KEY` — from https://console.anthropic.com (required for AI chatbot)
+- `FIREBASE.*` — from Firebase Console (required for cross-device profile persistence)
+
+`config.js` is gitignored and must never be committed.
 
 ## Architecture
 
@@ -101,6 +105,43 @@ Key z-index layers: `#mission-hud` (40) → `#back-btn` (50) → `#chatbot-panel
 
 Calls the Claude API directly from the browser (`anthropic-dangerous-direct-browser-access: true`). Uses `claude-haiku-4-5-20251001`. `chatbotSetContext(context, title)` rebuilds the system prompt per mission. `chatHistory[]` is capped at 20 messages (`MAX_HISTORY`).
 
+### Firebase / Firestore database (`js/db.js`)
+
+Firebase CDN (compat v9.22.1) is loaded **only in `index.html`** — not in `game.html`. `js/db.js` is loaded after the CDN scripts. `game.html` does not use Firebase.
+
+`js/db.js` exposes a single `DB` singleton with two async methods:
+- `DB.getProfile(email)` → Firestore document or `null`
+- `DB.saveProfile(profile)` → upserts the document
+
+**Firestore schema:**
+- Collection: `user_profiles`
+- Document ID: `btoa(email.toLowerCase().trim())` with `+` → `-`, `/` → `_`, `=` stripped (URL-safe base64)
+- Document fields: all profile fields (`email`, `nationality`, `age`, `location`, `inKorea`, `plannedArrival`, `purpose`, `registeredAt`, `updatedAt`) plus `clearedMissions` (array of mission ID strings)
+
+**Login flow** (`loginWithEmail()` in `index.html` inline script):
+1. User enters email → `DB.getProfile(email)` is called.
+2. If found, `profile.clearedMissions` is replayed into `localStorage` (`cleared_<id> = 'true'`), then `saveUserProfile()` writes the profile locally.
+3. If not found, error div `#err-not-found` is shown.
+
+**`clearedMissions` sync:** when a profile is saved (`DB.saveProfile`), the current `localStorage` cleared keys are collected and written into the `clearedMissions` array so the next device can restore them on login.
+
+**Firebase Console setup** (one-time):
+1. https://console.firebase.google.com → Create project
+2. Firestore Database → Create database → Start in **test mode** (allows all reads/writes for 30 days; tighten rules before production)
+3. Project Settings → Your apps → Add web app → copy the config object into `CONFIG.FIREBASE` in `js/config.js`
+
+**Firestore security rules for production** (replace test-mode rules):
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /user_profiles/{docId} {
+      allow read, write: if true; // tighten with Firebase Auth if needed
+    }
+  }
+}
+```
+
 ---
 
 ## Current missions (12 total)
@@ -158,9 +199,11 @@ On first visit, `#profile-overlay` modal appears and collects:
 | plannedArrival | `#f-arrival` (date, hidden if inKorea) | ISO date string or null |
 | purpose | `input[name="purpose"]` radio | `"work"` \| `"study"` \| `"travel"` |
 
-Stored in `localStorage["user_profile"]` as JSON with `registeredAt` and `updatedAt` timestamps. After save, `#profile-btn` (fixed top-right, `width: auto`) becomes visible.
+Stored in `localStorage["user_profile"]` as JSON with `registeredAt` and `updatedAt` timestamps. Also synced to Firestore via `DB.saveProfile()` on every save. After save, `#profile-btn` (fixed top-right, `width: auto`) becomes visible.
 
 Helpers (inline script): `getUserProfile()` → parsed object or `null`; `saveUserProfile(data)` → writes JSON. Modal input IDs: `f-<field>`. Error divs: `err-<field>`. `.error` class toggled on failed validation.
+
+The modal has two views — **login** (`#login-view`: email-only, restores profile from Firestore) and **register** (`#register-view`: full form). First-time visitors see the register view directly.
 
 ---
 

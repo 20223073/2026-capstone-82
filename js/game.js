@@ -42,6 +42,7 @@ hintEl.addEventListener('click', () => {
   if (isTyping) return;
   if (missionDone) { window.location.href = 'index.html'; return; }
   if (!waitingForEnter) return;
+  if (window.Analytics) Analytics.sceneAdvance();
   if (enterCallback) {
     const cb = enterCallback;
     enterCallback = null;
@@ -75,6 +76,7 @@ function addChoice(text, val) {
   btn.onclick = () => {
     if (isTyping) return;
     if (choiceCallback) {
+      if (window.Analytics) Analytics.choiceMade(text, val, null);
       const cb = choiceCallback;
       choiceCallback = null;
       cb(val);
@@ -219,9 +221,11 @@ function typeText(text, callback) {
     if (tip) {
       textEl.querySelectorAll('.word-tip.active').forEach(t => { if (t !== tip) t.classList.remove('active'); });
       tip.classList.toggle('active');
+      if (window.Analytics) Analytics.vocabTap(tip.textContent, tip.dataset.en);
       return;
     }
     if (isTyping) {
+      if (window.Analytics) Analytics.typewriterSkip();
       textEl.textContent = text;
       finish();
     }
@@ -255,6 +259,7 @@ function renderStep() {
 }
 
 function handleChoice(choice) {
+  if (window.Analytics) Analytics.choiceMade(choice.label, choice.next, currentStepKey);
   if (choice.next === 'END') {
     showMissionComplete();
   } else {
@@ -267,6 +272,7 @@ function handleChoice(choice) {
 // Mission complete
 // ===================================================================
 function showMissionComplete() {
+  if (window.Analytics) Analytics.missionComplete();
   missionDone = true;
   localStorage.setItem('cleared_' + currentMission.id, 'true');
   document.querySelector('#missionComplete h2').innerText = currentMission.completeTitle;
@@ -302,6 +308,7 @@ document.addEventListener('keydown', e => {
   if (missionDone) {
     window.location.href = 'index.html';
   } else if (!isTyping && waitingForEnter) {
+    if (window.Analytics) Analytics.sceneAdvance();
     if (enterCallback) {
       const cb = enterCallback;
       enterCallback = null;
@@ -334,7 +341,11 @@ function showVocabScreen(onComplete) {
       (rom ? `<span class="vocab-rom">${rom}</span>` : '') +
       `<span class="vocab-divider"></span>` +
       `<span class="vocab-en">${en}</span>`;
-    card.addEventListener('click', () => card.classList.toggle('revealed'));
+    card.addEventListener('click', () => {
+      const wasRevealed = card.classList.contains('revealed');
+      card.classList.toggle('revealed');
+      if (!wasRevealed && window.Analytics) Analytics.vocabCardReveal(kr, en);
+    });
     grid.appendChild(card);
   });
 
@@ -365,6 +376,7 @@ function startMission(missionId) {
     return;
   }
 
+  if (window.Analytics) Analytics.missionStart(missionId);
   currentStepKey = 'start';
   missionDone = false;
   changeBackground(currentMission.background);

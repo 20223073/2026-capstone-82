@@ -107,6 +107,7 @@ async function sendToClaud(userMessage) {
     return assistantMessage;
   } catch (err) {
     console.error('Chatbot error:', err);
+    if (window.Analytics) Analytics.chatbotError(err.message);
     chatHistory.pop();
     return `❌ 오류 발생 · Error: ${err.message}`;
   }
@@ -133,6 +134,7 @@ async function handleSend() {
   const text = inputEl.value.trim();
   if (!text) return;
 
+  if (window.Analytics) Analytics.chatbotQuery(text);
   addMessage(text, 'user');
   inputEl.value = '';
   inputEl.disabled = true;
@@ -165,6 +167,7 @@ window.addEventListener('load', () => {
   toggleBtn.onclick = () => {
     panelEl.classList.toggle('open');
     if (panelEl.classList.contains('open')) {
+      if (window.Analytics) Analytics.chatbotOpen();
       if (messagesEl.children.length === 0) {
         addMessage(
           '안녕하세요. 이 미션에 대해 궁금한 점이 있으면 물어보세요.\n\nHi! Ask me anything about this mission or Korean culture.',

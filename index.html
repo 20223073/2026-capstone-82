@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Korea Life RPG</title>
+<title>안녕 from Korea</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="menu-container">
 
-  <div class="menu-eyebrow">KOREA LIFE</div>
-  <h1>한국 생활 RPG</h1>
+  <img src="logo_v2.png" alt="안녕 from Korea" style="max-width:280px; width:100%; height:auto; margin:0 auto 8px; display:block;">
   <p class="subtitle">외국인을 위한 한국 문화 가이드 · A guide for newcomers</p>
 
   <!-- Visit mode toggle -->
@@ -122,7 +121,6 @@
   <p class="footer">미션을 클리어하면 자동으로 이 화면으로 돌아옵니다</p>
 </div>
 
-<div id="locked-toast"></div>
 
 <!-- Profile edit button (visible after registration) -->
 <button id="profile-btn" onclick="openProfileModal(false)">👤 내 프로필</button>
@@ -265,13 +263,6 @@ function goMission(missionId) {
   window.location.href = `game.html?mission=${missionId}`;
 }
 
-function showLockedMsg(missionId, prevMission) {
-  const toast = document.getElementById('locked-toast');
-  toast.textContent = `먼저 "${MISSION_NAMES[prevMission]}"을(를) 완료하세요 · Complete the previous step first`;
-  toast.classList.add('visible');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('visible'), 2500);
-}
 
 function renderMissions() {
   const mode = getCurrentMode();
@@ -303,21 +294,15 @@ function renderMissions() {
 
     card.style.display = '';
 
-    const isCleared  = localStorage.getItem('cleared_' + m) === 'true';
-    const prevId     = idx > 0 ? config.missions[idx - 1] : null;
-    const prevDone   = !prevId || localStorage.getItem('cleared_' + prevId) === 'true';
-    const isLocked   = !isCleared && !prevDone;
+    const isCleared = localStorage.getItem('cleared_' + m) === 'true';
 
     if (isCleared) {
       done++;
       card.classList.add('cleared');
       if (status) { status.textContent = '클리어'; status.classList.add('cleared'); }
-    } else if (isLocked) {
-      card.classList.add('locked');
-      if (status) status.textContent = '🔒';
     }
 
-    card.onclick = isLocked ? () => showLockedMsg(m, prevId) : () => goMission(m);
+    card.onclick = () => goMission(m);
 
     // Step number badge
     let badge = card.querySelector('.step-badge');

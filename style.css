@@ -1263,12 +1263,14 @@ button:active {
   }
 }
 
-/* Portrait phones: keep the full-screen background; crop horizontally from center
-   so subjects in center-composed scenes stay visible. Cap dialogue height so
-   the background image is not fully obscured when many choices appear. */
+/* Portrait phones: scale image to 65% height so the width constraint relaxes —
+   cover forces only ~35% of a landscape image's width to be visible, whereas
+   auto 65% shows ~53% while keeping characters above the dialogue box.
+   background-position Y is 'top' so the scene always starts from the top edge. */
 @media (max-width: 640px) and (orientation: portrait) {
   #background {
-    background-position: center center;
+    background-size: auto 65%;
+    background-position: center top;
   }
 
   #dialogue {

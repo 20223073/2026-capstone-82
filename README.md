@@ -1,4 +1,4 @@
-# 🇰🇷 Korea Life RPG
+# 🇰🇷 안녕 from Korea
 
 > An interactive cultural guide game that teaches foreigners how to navigate everyday life in Korea — through branching dialogue, real Korean vocabulary, and AI-powered help.
 
@@ -8,7 +8,7 @@ Built with **pure HTML / CSS / Vanilla JavaScript** — no framework, no build s
 
 ## What is this?
 
-Korea Life RPG puts players in realistic Korean situations: exchanging money at the airport, riding the subway, opening a bank account, seeing a doctor, and more. Each mission teaches practical Korean phrases and cultural knowledge through conversation choices.
+안녕 from Korea puts players in realistic Korean situations: exchanging money at the airport, riding the subway, opening a bank account, seeing a doctor, and more. Each mission teaches practical Korean phrases and cultural knowledge through conversation choices.
 
 Two modes are available:
 - **단기 방문 (Short-term visit)** — 7 missions for travellers (Airport → Shopping)
@@ -43,9 +43,11 @@ Missions unlock sequentially — complete each step before advancing to the next
 - **Vocabulary flashcards** — key Korean words shown before each mission with romanisation
 - **In-dialogue tooltips** — tap any highlighted word mid-scene to see its English meaning
 - **AI chatbot** — context-aware Claude assistant available during every mission
-- **Progress tracking** — completed missions saved to `localStorage`; progress bar on menu
+- **Progress tracking** — completed missions saved to `localStorage`; synced to Firebase on login
 - **Visit mode** — separate mission tracks for short-term visitors and long-term residents
 - **User profile** — one-time registration (nationality, age, purpose of stay, arrival date)
+- **Cross-device sync** — log in with email to restore progress on any device
+- **Analytics dashboard** — real-time Chart.js dashboard showing user demographics and behaviour
 - **Mobile-friendly** — portrait-mode crop anchors per image so characters stay in frame
 
 ---
@@ -59,14 +61,15 @@ No installation required.
 open index.html
 ```
 
-### Enable the AI chatbot (optional)
+### Enable the AI chatbot and Firebase (optional for local dev)
 
-1. Get a free API key at [console.anthropic.com](https://console.anthropic.com)
-2. Copy the template: `cp js/config.example.js js/config.js`
-3. Open `js/config.js` and paste your key
-4. Refresh — the 💬 button in-game will now work
+1. Get a Claude API key at [console.anthropic.com](https://console.anthropic.com)
+2. Set up a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+3. Copy the template: `cp js/config.example.js js/config.js`
+4. Open `js/config.js` and paste both keys
+5. Refresh — the 💬 chatbot button and user profile sync will work
 
-> `js/config.js` is git-ignored. Never commit your API key. Each team member creates their own local copy.
+> `js/config.js` is git-ignored. The Claude API key is injected automatically at deploy time via GitHub Actions Secrets.
 
 ---
 
@@ -75,29 +78,28 @@ open index.html
 ```
 ├── index.html          ← Main menu (mode tabs, progress bar, mission cards)
 ├── game.html           ← Universal game screen for all missions
+├── dashboard.html      ← Analytics dashboard (Firestore events + Chart.js)
 ├── style.css           ← All styling (menu + game in one file)
 │
 ├── js/
-│   ├── game.js         ← Core engine (typewriter, choices, vocab tooltips, background crop)
+│   ├── game.js         ← Core engine (typewriter, choices, vocab tooltips)
 │   ├── chatbot.js      ← AI helper (Claude API, context per mission)
+│   ├── db.js           ← Firebase/Firestore wrapper (profiles + events)
+│   ├── analytics.js    ← User behaviour event tracking (15 event types)
+│   ├── config.public.js← Public config committed to git (Firebase keys; no API key)
 │   ├── config.example.js
-│   └── config.js       ← API key — NOT committed (git-ignored)
+│   └── config.js       ← API keys — NOT committed (git-ignored)
 │
 ├── missions/           ← One JS file per mission (12 total)
-│   ├── exchange.js
-│   ├── lostfound.js
-│   ├── convstore.js
-│   ├── subway.js
-│   ├── telecom.js
-│   ├── immigration.js
-│   ├── bank.js
-│   ├── realestate.js
-│   ├── garbage.js
-│   ├── hospital.js
-│   ├── pharmacy.js
-│   └── clothing.js
 │
-└── images/             ← Scene backgrounds (~2400×1700 px landscape)
+├── images/             ← Scene backgrounds (~2400×1700 px landscape)
+│
+├── docs/               ← Project landing page (GitHub Pages)
+│   └── index.html
+│
+└── .github/
+    └── workflows/
+        └── deploy.yml  ← Auto-deploy to GitHub Pages; injects CLAUDE_API_KEY secret
 ```
 
 ---
@@ -118,13 +120,24 @@ See `CLAUDE.md` for the full architecture guide.
 
 ## Tech stack
 
-- HTML5 / CSS3 / Vanilla JavaScript — zero dependencies, zero build step
-- [Claude API](https://www.anthropic.com) — in-game AI assistant (`claude-haiku-4-5`)
-- Google Fonts — Inter, Noto Sans KR
+| Layer | Technology |
+|---|---|
+| Frontend | HTML5 / CSS3 / Vanilla JavaScript — zero dependencies, zero build step |
+| AI Chatbot | [Claude API](https://www.anthropic.com) — `claude-haiku-4-5-20251001` |
+| Database | Firebase Firestore — user profiles + analytics events |
+| Analytics | Chart.js v4 — real-time dashboard (`dashboard.html`) |
+| Fonts | Google Fonts — Inter, Noto Sans KR |
+| Deployment | GitHub Actions → GitHub Pages (API key injected via Secrets) |
 
 ---
 
-## Team
+## Team · +82 Crew
 
 Kookmin University — 2026 Capstone Design Project  
 [github.com/kookmin-sw/2026-capstone-82](https://github.com/kookmin-sw/2026-capstone-82)
+
+| Name | Role |
+|---|---|
+| 울란 | 팀장 · 프로젝트 기획 · 시나리오 · QA |
+| 바호디르 | 개발자 1 · 게임 엔진 · AI 챗봇 · Firebase · UI 디자인 |
+| 만다흐자야 | 개발자 2 · UI 디자인 · 로고 · 테스트 |

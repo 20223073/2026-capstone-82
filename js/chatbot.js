@@ -169,8 +169,11 @@ window.addEventListener('load', () => {
     if (panelEl.classList.contains('open')) {
       if (window.Analytics) Analytics.chatbotOpen();
       if (messagesEl.children.length === 0) {
+        const isMainMenu = missionTitle === '안녕 from Korea';
         addMessage(
-          '안녕하세요. 이 미션에 대해 궁금한 점이 있으면 물어보세요.\n\nHi! Ask me anything about this mission or Korean culture.',
+          isMainMenu
+            ? '안녕하세요! 한국 생활에 대해 궁금한 점을 물어보세요. 어떤 미션을 먼저 시도할지 추천도 해드릴게요.\n\nHi! Ask me anything about life in Korea, or I can recommend which mission to try first!'
+            : '안녕하세요. 이 미션에 대해 궁금한 점이 있으면 물어보세요.\n\nHi! Ask me anything about this mission or Korean culture.',
           'bot'
         );
       }

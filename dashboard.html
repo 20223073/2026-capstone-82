@@ -87,6 +87,10 @@ h1 { font-size: 26px; font-weight: 700; }
       <h2>현재 한국 거주 여부</h2>
       <canvas id="ch-inkorea"></canvas>
     </div>
+    <div class="chart-card accent">
+      <h2>성별 · Gender</h2>
+      <canvas id="ch-gender"></canvas>
+    </div>
     <div class="chart-card accent wide">
       <h2>입국 예정 시기</h2>
       <div id="ch-arrival-wrap"><canvas id="ch-arrival"></canvas></div>
@@ -266,6 +270,31 @@ function renderProfiles(profiles) {
     },
   });
 
+  // ── Gender distribution ───────────────────────────────────
+  const gCount = { male: 0, female: 0 };
+  profiles.forEach(p => { if (p.gender) gCount[p.gender] = (gCount[p.gender] || 0) + 1; });
+
+  new Chart(document.getElementById('ch-gender'), {
+    type: 'doughnut',
+    data: {
+      labels: ['👨 남성 · Male', '👩 여성 · Female'],
+      datasets: [{
+        data: [gCount.male, gCount.female],
+        backgroundColor: ['#5856d6', '#ff2d55'],
+        borderWidth: 0,
+        hoverOffset: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, font: { size: 13 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}명` } },
+      },
+    },
+  });
+
   // ── Arrival timeline ──────────────────────────────────────
   const arriving_profiles = profiles.filter(p => p.inKorea !== true && p.plannedArrival);
   const wrap = document.getElementById('ch-arrival-wrap');
@@ -321,7 +350,7 @@ function renderProfiles(profiles) {
 function renderDashboard(events) {
   // ── Summary ──────────────────────────────────────────────
   const sessions  = new Set(events.map(e => e.sessionId).filter(Boolean)).size;
-  const users     = new Set(events.map(e => e.email).filter(Boolean)).size;
+  const users     = new Set(events.map(e => e.userId).filter(Boolean)).size;
   const starts    = events.filter(e => e.eventType === 'mission_start').length;
   const completes = events.filter(e => e.eventType === 'mission_complete').length;
   const abandons  = events.filter(e => e.eventType === 'mission_abandon').length;
@@ -486,13 +515,14 @@ function renderDashboard(events) {
                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
   });
 
-  // ── Top chatbot questions ─────────────────────────────────
+  // ── Top chatbot questions (2+ occurrences only — privacy: single queries hidden) ──
   const qCounts = {};
   events.filter(e => e.eventType === 'chatbot_query' && e.question).forEach(e => {
-    const q = e.question.trim();
+    const q = e.question.trim().slice(0, 120); // cap length
     qCounts[q] = (qCounts[q] || 0) + 1;
   });
-  const topQ = Object.entries(qCounts).sort((a,b) => b[1]-a[1]).slice(0, 15);
+  // Only show questions asked by multiple users (filters out one-time personal queries)
+  const topQ = Object.entries(qCounts).filter(([,c]) => c >= 2).sort((a,b) => b[1]-a[1]).slice(0, 15);
   const qList = document.getElementById('queries-list');
   qList.innerHTML = '';
   if (!topQ.length) {

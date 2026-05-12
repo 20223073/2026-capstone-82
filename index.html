@@ -125,8 +125,35 @@
 </div>
 
 
-<!-- Profile edit button (visible after registration) -->
-<button id="profile-btn" onclick="openProfileModal(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+<!-- My Page button (visible after registration) -->
+<button id="profile-btn" onclick="toggleMyPage()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  <span id="profile-btn-name"></span>
+</button>
+
+<!-- My Page dropdown -->
+<div id="mypage-dropdown">
+  <div class="mypage-header">
+    <div class="mypage-avatar">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <div class="mypage-info">
+      <div class="mypage-greeting"><span id="mypage-name-text"></span> <span class="mypage-welcome">환영합니다!</span></div>
+      <div id="mypage-email-text" class="mypage-email"></div>
+    </div>
+  </div>
+  <div class="mypage-divider"></div>
+  <div class="mypage-actions">
+    <button class="mypage-action-btn" id="mypage-edit-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      개인정보 수정
+    </button>
+    <button class="mypage-action-btn mypage-logout-btn" id="mypage-logout-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      로그아웃 · Log out
+    </button>
+  </div>
+</div>
 
 <!-- User profile modal: two views — login (email-only) and register (full form) -->
 <div id="profile-overlay">
@@ -155,35 +182,261 @@
       <form id="profile-form" novalidate>
 
         <div class="form-group">
-          <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span></label>
+          <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span><span class="lock-badge" id="email-lock-badge">🔒 변경 불가</span></label>
           <input class="form-input" type="email" id="f-email" placeholder="you@gmail.com" autocomplete="email">
           <div class="profile-error-msg" id="err-email">유효한 이메일을 입력해주세요.</div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span></label>
+          <label class="form-label" for="f-name">이름 / 닉네임 · Name / Nickname <span class="form-required">*</span></label>
+          <input class="form-input" type="text" id="f-name" placeholder="e.g. Alex / 알렉스" autocomplete="name">
+          <div class="profile-error-msg" id="err-name">이름을 입력해주세요.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">성별 · Gender <span class="form-required">*</span></label>
+          <div class="form-radio-group">
+            <div class="radio-option">
+              <input type="radio" name="gender" id="g-male" value="male">
+              <label for="g-male">👨 남성 · Male</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="gender" id="g-female" value="female">
+              <label for="g-female">👩 여성 · Female</label>
+            </div>
+          </div>
+          <div class="profile-error-msg" id="err-gender">성별을 선택해주세요.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span><span class="lock-badge" id="nationality-lock-badge">🔒 변경 불가</span></label>
           <select class="form-select" id="f-nationality">
             <option value="">선택해주세요 · Select…</option>
-            <option>China</option>
-            <option>Japan</option>
-            <option>Vietnam</option>
-            <option>Philippines</option>
-            <option>Indonesia</option>
-            <option>Thailand</option>
-            <option>Mongolia</option>
-            <option>Uzbekistan</option>
-            <option>Kazakhstan</option>
-            <option>Russia</option>
-            <option>United States</option>
-            <option>United Kingdom</option>
-            <option>France</option>
-            <option>Germany</option>
-            <option>India</option>
-            <option>Bangladesh</option>
-            <option>Nepal</option>
-            <option>Myanmar</option>
-            <option>Cambodia</option>
-            <option>Other</option>
+            <optgroup label="자주 방문 · Most Common">
+              <option>China</option>
+              <option>Japan</option>
+              <option>Vietnam</option>
+              <option>Philippines</option>
+              <option>Indonesia</option>
+              <option>Thailand</option>
+              <option>Malaysia</option>
+              <option>Mongolia</option>
+              <option>Uzbekistan</option>
+              <option>Kazakhstan</option>
+              <option>Russia</option>
+              <option>United States</option>
+              <option>United Kingdom</option>
+              <option>France</option>
+              <option>Germany</option>
+              <option>India</option>
+              <option>Bangladesh</option>
+              <option>Nepal</option>
+              <option>Myanmar</option>
+              <option>Cambodia</option>
+              <option>Taiwan</option>
+              <option>Hong Kong</option>
+            </optgroup>
+            <optgroup label="전체 국가 · All Countries (A–Z)">
+              <option>Afghanistan</option>
+              <option>Albania</option>
+              <option>Algeria</option>
+              <option>Andorra</option>
+              <option>Angola</option>
+              <option>Antigua and Barbuda</option>
+              <option>Argentina</option>
+              <option>Armenia</option>
+              <option>Australia</option>
+              <option>Austria</option>
+              <option>Azerbaijan</option>
+              <option>Bahamas</option>
+              <option>Bahrain</option>
+              <option>Bangladesh</option>
+              <option>Barbados</option>
+              <option>Belarus</option>
+              <option>Belgium</option>
+              <option>Belize</option>
+              <option>Benin</option>
+              <option>Bhutan</option>
+              <option>Bolivia</option>
+              <option>Bosnia and Herzegovina</option>
+              <option>Botswana</option>
+              <option>Brazil</option>
+              <option>Brunei</option>
+              <option>Bulgaria</option>
+              <option>Burkina Faso</option>
+              <option>Burundi</option>
+              <option>Cabo Verde</option>
+              <option>Cambodia</option>
+              <option>Cameroon</option>
+              <option>Canada</option>
+              <option>Central African Republic</option>
+              <option>Chad</option>
+              <option>Chile</option>
+              <option>China</option>
+              <option>Colombia</option>
+              <option>Comoros</option>
+              <option>Congo (Dem. Rep.)</option>
+              <option>Congo (Rep.)</option>
+              <option>Cook Islands</option>
+              <option>Costa Rica</option>
+              <option>Côte d'Ivoire</option>
+              <option>Croatia</option>
+              <option>Cuba</option>
+              <option>Cyprus</option>
+              <option>Czech Republic</option>
+              <option>Denmark</option>
+              <option>Djibouti</option>
+              <option>Dominica</option>
+              <option>Dominican Republic</option>
+              <option>Ecuador</option>
+              <option>Egypt</option>
+              <option>El Salvador</option>
+              <option>Equatorial Guinea</option>
+              <option>Eritrea</option>
+              <option>Estonia</option>
+              <option>Eswatini</option>
+              <option>Ethiopia</option>
+              <option>Fiji</option>
+              <option>Finland</option>
+              <option>France</option>
+              <option>Gabon</option>
+              <option>Gambia</option>
+              <option>Georgia</option>
+              <option>Germany</option>
+              <option>Ghana</option>
+              <option>Greece</option>
+              <option>Grenada</option>
+              <option>Guatemala</option>
+              <option>Guinea</option>
+              <option>Guinea-Bissau</option>
+              <option>Guyana</option>
+              <option>Haiti</option>
+              <option>Honduras</option>
+              <option>Hong Kong</option>
+              <option>Hungary</option>
+              <option>Iceland</option>
+              <option>India</option>
+              <option>Indonesia</option>
+              <option>Iran</option>
+              <option>Iraq</option>
+              <option>Ireland</option>
+              <option>Israel</option>
+              <option>Italy</option>
+              <option>Jamaica</option>
+              <option>Japan</option>
+              <option>Jordan</option>
+              <option>Kazakhstan</option>
+              <option>Kenya</option>
+              <option>Kiribati</option>
+              <option>Kuwait</option>
+              <option>Kyrgyzstan</option>
+              <option>Laos</option>
+              <option>Latvia</option>
+              <option>Lebanon</option>
+              <option>Lesotho</option>
+              <option>Liberia</option>
+              <option>Libya</option>
+              <option>Liechtenstein</option>
+              <option>Lithuania</option>
+              <option>Luxembourg</option>
+              <option>Macau</option>
+              <option>Madagascar</option>
+              <option>Malawi</option>
+              <option>Malaysia</option>
+              <option>Maldives</option>
+              <option>Mali</option>
+              <option>Malta</option>
+              <option>Marshall Islands</option>
+              <option>Mauritania</option>
+              <option>Mauritius</option>
+              <option>Mexico</option>
+              <option>Micronesia</option>
+              <option>Moldova</option>
+              <option>Monaco</option>
+              <option>Mongolia</option>
+              <option>Montenegro</option>
+              <option>Morocco</option>
+              <option>Mozambique</option>
+              <option>Myanmar</option>
+              <option>Namibia</option>
+              <option>Nauru</option>
+              <option>Nepal</option>
+              <option>Netherlands</option>
+              <option>New Zealand</option>
+              <option>Nicaragua</option>
+              <option>Niger</option>
+              <option>Nigeria</option>
+              <option>Niue</option>
+              <option>North Korea</option>
+              <option>North Macedonia</option>
+              <option>Norway</option>
+              <option>Oman</option>
+              <option>Pakistan</option>
+              <option>Palau</option>
+              <option>Panama</option>
+              <option>Papua New Guinea</option>
+              <option>Paraguay</option>
+              <option>Peru</option>
+              <option>Philippines</option>
+              <option>Poland</option>
+              <option>Portugal</option>
+              <option>Qatar</option>
+              <option>Romania</option>
+              <option>Russia</option>
+              <option>Rwanda</option>
+              <option>Saint Kitts and Nevis</option>
+              <option>Saint Lucia</option>
+              <option>Saint Vincent and the Grenadines</option>
+              <option>Samoa</option>
+              <option>San Marino</option>
+              <option>São Tomé and Príncipe</option>
+              <option>Saudi Arabia</option>
+              <option>Senegal</option>
+              <option>Serbia</option>
+              <option>Seychelles</option>
+              <option>Sierra Leone</option>
+              <option>Singapore</option>
+              <option>Slovakia</option>
+              <option>Slovenia</option>
+              <option>Solomon Islands</option>
+              <option>Somalia</option>
+              <option>South Africa</option>
+              <option>South Korea</option>
+              <option>South Sudan</option>
+              <option>Spain</option>
+              <option>Sri Lanka</option>
+              <option>Sudan</option>
+              <option>Suriname</option>
+              <option>Sweden</option>
+              <option>Switzerland</option>
+              <option>Syria</option>
+              <option>Taiwan</option>
+              <option>Tajikistan</option>
+              <option>Tanzania</option>
+              <option>Thailand</option>
+              <option>Timor-Leste</option>
+              <option>Togo</option>
+              <option>Tonga</option>
+              <option>Trinidad and Tobago</option>
+              <option>Tunisia</option>
+              <option>Turkey</option>
+              <option>Turkmenistan</option>
+              <option>Tuvalu</option>
+              <option>Uganda</option>
+              <option>Ukraine</option>
+              <option>United Arab Emirates</option>
+              <option>United Kingdom</option>
+              <option>United States</option>
+              <option>Uruguay</option>
+              <option>Uzbekistan</option>
+              <option>Vanuatu</option>
+              <option>Vatican City</option>
+              <option>Venezuela</option>
+              <option>Vietnam</option>
+              <option>Yemen</option>
+              <option>Zambia</option>
+              <option>Zimbabwe</option>
+            </optgroup>
           </select>
           <div class="profile-error-msg" id="err-nationality">국적을 선택해주세요.</div>
         </div>
@@ -249,8 +502,23 @@
   </div>
 </div>
 
+<!-- Chatbot -->
+<button id="chatbot-toggle" title="AI 도우미 · Helper">💬</button>
+<div id="chatbot-panel">
+  <div id="chatbot-header">
+    <span>AI 도우미 · Helper</span>
+    <button id="chatbot-close">×</button>
+  </div>
+  <div id="chatbot-messages"></div>
+  <div id="chatbot-input-wrap">
+    <input type="text" id="chatbot-input" placeholder="질문을 입력하세요 · Ask anything..." />
+    <button id="chatbot-send">보내기</button>
+  </div>
+</div>
+
 <script src="js/config.public.js"></script>
 <script src="js/config.js" onerror="void 0"></script>
+<script src="js/chatbot.js"></script>
 <script src="js/db.js"></script>
 <script src="js/analytics.js"></script>
 <script>
@@ -364,17 +632,41 @@ function saveUserProfile(data) {
   if (data.email) localStorage.setItem('profile_' + data.email, JSON.stringify(data));
 }
 
+function lockIdentityFields() {
+  const emailEl       = document.getElementById('f-email');
+  const nationalityEl = document.getElementById('f-nationality');
+  emailEl.setAttribute('readonly', 'readonly');
+  emailEl.classList.add('field-locked');
+  nationalityEl.setAttribute('disabled', 'disabled');
+  nationalityEl.classList.add('field-locked');
+  document.getElementById('email-lock-badge').style.display       = 'inline';
+  document.getElementById('nationality-lock-badge').style.display = 'inline';
+}
+
+function unlockIdentityFields() {
+  const emailEl       = document.getElementById('f-email');
+  const nationalityEl = document.getElementById('f-nationality');
+  emailEl.removeAttribute('readonly');
+  emailEl.classList.remove('field-locked');
+  nationalityEl.removeAttribute('disabled');
+  nationalityEl.classList.remove('field-locked');
+  document.getElementById('email-lock-badge').style.display       = 'none';
+  document.getElementById('nationality-lock-badge').style.display = 'none';
+}
+
 function showLoginView() {
   document.getElementById('login-view').style.display = '';
   document.getElementById('register-view').style.display = 'none';
   document.getElementById('err-login-email').style.display = 'none';
   document.getElementById('err-not-found').style.display = 'none';
+  unlockIdentityFields();
 }
 
 function showRegisterView(prefilledEmail) {
   document.getElementById('login-view').style.display = 'none';
   document.getElementById('register-view').style.display = '';
   if (prefilledEmail) document.getElementById('f-email').value = prefilledEmail;
+  unlockIdentityFields();
 }
 
 function openProfileModal(isFirstVisit) {
@@ -385,16 +677,22 @@ function openProfileModal(isFirstVisit) {
     // Editing existing profile — jump straight to register view pre-filled
     showRegisterView();
     document.getElementById('f-email').value       = profile.email       || '';
+    document.getElementById('f-name').value        = profile.name        || '';
     document.getElementById('f-nationality').value = profile.nationality  || '';
     document.getElementById('f-age').value         = profile.age          || '';
     document.getElementById('f-location').value    = profile.location     || '';
     document.getElementById('f-arrival').value     = profile.plannedArrival || '';
+    if (profile.gender) {
+      const gr = document.querySelector(`input[name="gender"][value="${profile.gender}"]`);
+      if (gr) gr.checked = true;
+    }
     const kr = document.querySelector(`input[name="in-korea"][value="${profile.inKorea ? 'yes' : 'no'}"]`);
     if (kr) kr.checked = true;
     if (profile.purpose) {
       const pr = document.querySelector(`input[name="purpose"][value="${profile.purpose}"]`);
       if (pr) pr.checked = true;
     }
+    lockIdentityFields();
     document.getElementById('profile-submit').textContent = '저장하기 · Save';
     toggleArrivalField();
   } else {
@@ -450,6 +748,8 @@ function validateAndSave(e) {
   let valid = true;
 
   const email       = document.getElementById('f-email').value.trim();
+  const name        = document.getElementById('f-name').value.trim();
+  const gender      = document.querySelector('input[name="gender"]:checked')?.value;
   const nationality = document.getElementById('f-nationality').value;
   const age         = parseInt(document.getElementById('f-age').value, 10);
   const location    = document.getElementById('f-location').value.trim();
@@ -464,6 +764,8 @@ function validateAndSave(e) {
 
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   setErr('err-email',       !emailOk);         if (!emailOk) valid = false;
+  setErr('err-name',        !name);            if (!name) valid = false;
+  setErr('err-gender',      !gender);          if (!gender) valid = false;
   setErr('err-nationality', !nationality);     if (!nationality) valid = false;
   setErr('err-age',         isNaN(age) || age < 10 || age > 100);
   if (isNaN(age) || age < 10 || age > 100)     valid = false;
@@ -473,7 +775,7 @@ function validateAndSave(e) {
   if (!valid) return;
 
   const data = {
-    email, nationality, age, location, inKorea,
+    email, name, gender, nationality, age, location, inKorea,
     plannedArrival: inKorea ? null : (arrival || null),
     purpose,
     clearedMissions: getLocalClearedMissions(),
@@ -486,6 +788,7 @@ function validateAndSave(e) {
   if (window.Analytics) Analytics.userRegistered();
   document.getElementById('profile-overlay').classList.remove('active');
   document.getElementById('profile-btn').style.display = 'flex';
+  updateMyPageBtn();
 }
 
 // Collect all cleared mission IDs from localStorage
@@ -508,9 +811,49 @@ async function syncProgressToFirebase() {
   DB.saveProfile(updated);
 }
 
+// ── My Page dropdown ────────────────────────────────────────
+function updateMyPageBtn() {
+  const profile = getUserProfile();
+  if (!profile) return;
+  const displayName = profile.name || profile.email || '';
+  document.getElementById('profile-btn-name').textContent = displayName;
+  document.getElementById('mypage-name-text').textContent = displayName;
+  document.getElementById('mypage-email-text').textContent = profile.email || '';
+}
+
+function toggleMyPage() {
+  const btn      = document.getElementById('profile-btn');
+  const dropdown = document.getElementById('mypage-dropdown');
+  const isOpen   = dropdown.classList.contains('open');
+  if (isOpen) {
+    dropdown.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    updateMyPageBtn();
+    dropdown.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+function closeMyPage() {
+  document.getElementById('mypage-dropdown').classList.remove('open');
+  document.getElementById('profile-btn').classList.remove('open');
+}
+
+function logoutUser() {
+  closeMyPage();
+  localStorage.removeItem('user_profile');
+  const ALL = ['exchange','lostfound','convstore','subway','telecom','immigration',
+               'bank','realestate','garbage','hospital','pharmacy','clothing'];
+  ALL.forEach(id => localStorage.removeItem('cleared_' + id));
+  location.reload();
+}
+// ─────────────────────────────────────────────────────────────
+
 function initProfile() {
   const profile = getUserProfile();
   if (profile) {
+    updateMyPageBtn();
     document.getElementById('profile-btn').style.display = 'flex';
   } else {
     openProfileModal(true);
@@ -522,6 +865,15 @@ function initProfile() {
   document.getElementById('login-new-btn').addEventListener('click', () => showRegisterView(''));
   document.getElementById('register-back-btn').addEventListener('click', showLoginView);
   document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') handleEmailLookup(); });
+  document.getElementById('mypage-edit-btn').addEventListener('click', () => { closeMyPage(); openProfileModal(false); });
+  document.getElementById('mypage-logout-btn').addEventListener('click', logoutUser);
+  // Close dropdown when clicking outside
+  document.addEventListener('click', e => {
+    if (!document.getElementById('profile-btn').contains(e.target) &&
+        !document.getElementById('mypage-dropdown').contains(e.target)) {
+      closeMyPage();
+    }
+  });
   toggleArrivalField();
 }
 
@@ -529,6 +881,16 @@ renderMissions();
 initProfile();
 syncProgressToFirebase();
 Analytics.sessionStart();
+
+// Set chatbot context for the main menu
+if (typeof chatbotSetContext === 'function') {
+  chatbotSetContext(
+    `The player is on the main menu of "안녕 from Korea", a Korean cultural RPG game for foreigners.
+Available missions: Currency Exchange (공항 환전), Lost & Found (분실물 센터), Convenience Store (편의점), Seoul Subway (지하철), SIM Card (통신사 유심), Immigration Office (출입국사무소), Bank Account (은행), Real Estate (부동산), Garbage Bags (쓰레기 봉투), Hospital (병원), Pharmacy (약국), Clothing Store Refund (옷 가게).
+Help the player choose which mission to try next, explain Korean culture, or answer general questions about living/traveling in Korea.`,
+    '안녕 from Korea'
+  );
+}
 </script>
 
 </body>

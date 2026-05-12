@@ -954,12 +954,12 @@ button:active {
   text-underline-offset: 2px;
 }
 
-/* Profile button on menu */
+/* My Page button */
 #profile-btn {
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 9px 16px;
+  padding: 8px 14px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -968,15 +968,130 @@ button:active {
   color: var(--text);
   cursor: pointer;
   width: auto;
-  z-index: 10;
+  z-index: 20;
   box-shadow: var(--shadow-sm);
   transition: all 0.15s ease;
   display: none;
+  align-items: center;
+  gap: 7px;
 }
-
 #profile-btn:hover {
   border-color: var(--border-strong);
   box-shadow: var(--shadow-md);
+}
+#profile-btn.open {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,113,227,0.12);
+}
+#profile-btn-name {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* My Page dropdown */
+#mypage-dropdown {
+  position: fixed;
+  top: 58px;
+  right: 20px;
+  width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 19;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  transform-origin: top right;
+}
+#mypage-dropdown.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* Header area */
+.mypage-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+.mypage-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8F1FC, #C7DCFA);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.mypage-info { min-width: 0; }
+.mypage-greeting {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.mypage-welcome {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  font-family: 'Noto Sans KR', sans-serif;
+  white-space: nowrap;
+}
+.mypage-email {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mypage-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 16px;
+}
+
+/* Action buttons */
+.mypage-actions {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mypage-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 10px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+}
+.mypage-action-btn:hover {
+  background: var(--bg);
+}
+.mypage-logout-btn {
+  color: #E8192C;
+}
+.mypage-logout-btn:hover {
+  background: #FFF1F2;
 }
 
 /* ===================================================================

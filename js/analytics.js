@@ -26,6 +26,8 @@ var Analytics = (() => {
       userId:      userId(p),
       email:       p ? p.email       : null,
       nationality: p ? p.nationality : null,
+      purpose:     p ? p.purpose     : null,
+      gender:      p ? p.gender      : null,
       missionId:   _missionId,
       eventType,
       timestamp:   new Date().toISOString(),

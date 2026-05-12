@@ -182,7 +182,7 @@
       <form id="profile-form" novalidate>
 
         <div class="form-group">
-          <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span></label>
+          <label class="form-label" for="f-email">이메일 (Gmail) <span class="form-required">*</span><span class="lock-badge" id="email-lock-badge">🔒 변경 불가</span></label>
           <input class="form-input" type="email" id="f-email" placeholder="you@gmail.com" autocomplete="email">
           <div class="profile-error-msg" id="err-email">유효한 이메일을 입력해주세요.</div>
         </div>
@@ -209,7 +209,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span></label>
+          <label class="form-label" for="f-nationality">국적 · Nationality <span class="form-required">*</span><span class="lock-badge" id="nationality-lock-badge">🔒 변경 불가</span></label>
           <select class="form-select" id="f-nationality">
             <option value="">선택해주세요 · Select…</option>
             <optgroup label="자주 방문 · Most Common">
@@ -632,17 +632,41 @@ function saveUserProfile(data) {
   if (data.email) localStorage.setItem('profile_' + data.email, JSON.stringify(data));
 }
 
+function lockIdentityFields() {
+  const emailEl       = document.getElementById('f-email');
+  const nationalityEl = document.getElementById('f-nationality');
+  emailEl.setAttribute('readonly', 'readonly');
+  emailEl.classList.add('field-locked');
+  nationalityEl.setAttribute('disabled', 'disabled');
+  nationalityEl.classList.add('field-locked');
+  document.getElementById('email-lock-badge').style.display       = 'inline';
+  document.getElementById('nationality-lock-badge').style.display = 'inline';
+}
+
+function unlockIdentityFields() {
+  const emailEl       = document.getElementById('f-email');
+  const nationalityEl = document.getElementById('f-nationality');
+  emailEl.removeAttribute('readonly');
+  emailEl.classList.remove('field-locked');
+  nationalityEl.removeAttribute('disabled');
+  nationalityEl.classList.remove('field-locked');
+  document.getElementById('email-lock-badge').style.display       = 'none';
+  document.getElementById('nationality-lock-badge').style.display = 'none';
+}
+
 function showLoginView() {
   document.getElementById('login-view').style.display = '';
   document.getElementById('register-view').style.display = 'none';
   document.getElementById('err-login-email').style.display = 'none';
   document.getElementById('err-not-found').style.display = 'none';
+  unlockIdentityFields();
 }
 
 function showRegisterView(prefilledEmail) {
   document.getElementById('login-view').style.display = 'none';
   document.getElementById('register-view').style.display = '';
   if (prefilledEmail) document.getElementById('f-email').value = prefilledEmail;
+  unlockIdentityFields();
 }
 
 function openProfileModal(isFirstVisit) {
@@ -668,6 +692,7 @@ function openProfileModal(isFirstVisit) {
       const pr = document.querySelector(`input[name="purpose"][value="${profile.purpose}"]`);
       if (pr) pr.checked = true;
     }
+    lockIdentityFields();
     document.getElementById('profile-submit').textContent = '저장하기 · Save';
     toggleArrivalField();
   } else {
